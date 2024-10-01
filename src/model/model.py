@@ -3,9 +3,9 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from uuid import UUID, uuid4
 from typing import List
 from datetime import datetime
+from meta import Base
 
-class Base(DeclarativeBase):
-    pass
+
 
 class UUIDMixin:
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
