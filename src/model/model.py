@@ -3,8 +3,8 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from uuid import UUID, uuid4
 from typing import List
 from datetime import datetime
-from meta import Base
-
+from src.model.meta import Base
+from sqlalchemy import JSON
 
 
 class UUIDMixin:
@@ -13,7 +13,7 @@ class UUIDMixin:
 class Recipe(Base, UUIDMixin):
     __tablename__ = 'recipe'
     recipe_title: Mapped[str]
-    ingredients: Mapped[List[str]] = mapped_column(nullable=False)
+    ingredients: Mapped[list[str]] = mapped_column(JSON, nullable=False)
     likes: Mapped[int] = mapped_column(default=0)
     dislikes: Mapped[int] = mapped_column(default=0)
     user_id: Mapped[UUID] = mapped_column(ForeignKey('user.id'), nullable=False)

@@ -3,10 +3,10 @@ from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import JSONResponse
 
-from .router import router
-from ..storage.db import get_db
+from src.api.router import router
+from src.storage.db import get_db
 
 
-@router.get('/home')
+@router.get('/home/')
 async def home(session: AsyncSession = Depends(get_db)) -> JSONResponse:
     return  ORJSONResponse({'massage': 'hello'})
