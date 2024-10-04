@@ -2,7 +2,7 @@ from collections.abc import AsyncGenerator
 
 from asyncpg import Connection
 from sqlalchemy import AsyncAdaptedQueuePool
-from sqlalchemy.ext.asyncio import AsyncConnection, create_async_engine, AsyncEngine, async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, async_sessionmaker, AsyncSession
 
 from config.settings import settings
 
@@ -35,5 +35,3 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 async def init_models():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-
-asyncio.run(init_models())
