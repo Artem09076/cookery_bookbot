@@ -13,7 +13,7 @@ class Recipe(Base):
     ingredients: Mapped[list[str]] = mapped_column(JSON, nullable=False)
     likes: Mapped[int] = mapped_column(default=0)
     dislikes: Mapped[int] = mapped_column(default=0)
-    user_id: Mapped[UUID] = mapped_column(ForeignKey('user.id'), nullable=False)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey('user.user_id'), nullable=False)
     user = relationship('User', back_populates='recipes')
 
     __table_args__ = (
