@@ -2,9 +2,7 @@ from pydantic import BaseModel
 
 
 class AuthPost(BaseModel):
-    login: str
-    password: str
-
+    user_id: int
 
 class AuthResponse(BaseModel):
     token: str
