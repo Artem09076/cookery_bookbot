@@ -1,5 +1,5 @@
-from sqlalchemy import ForeignKey, CheckConstraint, Integer, TIMESTAMP
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey, CheckConstraint, TIMESTAMP
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from uuid import UUID, uuid4
 from typing import List
 from datetime import datetime
