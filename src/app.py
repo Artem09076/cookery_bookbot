@@ -12,7 +12,11 @@ from script.init_db import init_models
 from src.api.login import router
 from src.bot import setup_dp, setup_bot
 from src.storage.redis import setup_redis
+from src.logger import set_correlation_id
+from src.log_config import logging 
 from src.handlers.command.router import router as command_router
+
+logger = logging.getLogger('backend_logger')
 
 async def lifespan(app: FastAPI):
     dp = Dispatcher()
@@ -28,8 +32,10 @@ async def lifespan(app: FastAPI):
 
 
 def create_app() -> FastAPI:
+    correlation_id = set_correlation_id()
     app = FastAPI(docs_url='/swagger', lifespan=lifespan)
     app.include_router(router)
+    logger.info(f'Create app [{correlation_id}]')
     return  app
 
 async def start_polling():
