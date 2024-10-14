@@ -12,5 +12,5 @@ async def login(body: AuthPost, session: AsyncSession = Depends(get_db)):
     user = User(user_id=body.user_id)
     session.add(user)
     await session.commit()
-    return ORJSONResponse({'massage': 'user add'}, 200)
+    return ORJSONResponse({'message': 'user add'}, 200)
 

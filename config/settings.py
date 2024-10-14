@@ -9,11 +9,11 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     REDIS_HOST: str
     REDIS_PORT: int
+    BOT_WEBHOOK_URL: str
     @property
     def db_url(self):
         return  f'postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
 
     model_config = SettingsConfigDict(env_file='config/.env', env_file_encoding='utf-8')
-
 
 settings = Settings()
