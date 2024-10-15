@@ -7,11 +7,6 @@ from contextvars import ContextVar
 correlation_id_context: ContextVar[str] = ContextVar(
     'correlation_id', default='N/A')
 
-# with open('config/logging.conf.yml', 'r') as f:
-#     LOGGING_CONFIG = yaml.safe_load(f)
-
-# logging.config.dictConfig(LOGGING_CONFIG)
-
 
 class ConsoleFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
