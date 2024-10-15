@@ -8,11 +8,19 @@ from starlette.responses import JSONResponse
 from src.api.router import router
 from src.bot import get_dp, get_bot
 from src.storage.db import get_db
+from src.logger import set_correlation_id, logger
 
 
 @router.post('/home')
 async def home(request: Request) -> None:
-    data = await request.json()
-    update = Update(**data)
-    dp = get_dp()
-    await dp.feed_webhook_update(get_bot(), update)
+    correlation_id = set_correlation_id()
+    logger.info(f"Получен запрос от Telegram, Correlation ID: {correlation_id}")
+    try:
+        data = await request.json()
+        update = Update(**data)
+        dp = get_dp()
+        await dp.feed_webhook_update(get_bot(), update)
+        logger.info(f"Обновление успешно обработано, Correlation ID: {correlation_id}")
+    except Exception as e:
+        logger.error(f"Ошибка при обработке обновления: {e}, Correlation ID: {correlation_id}")
+        raise e

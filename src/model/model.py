@@ -6,6 +6,7 @@ from datetime import datetime
 from src.model.meta import Base
 from sqlalchemy import JSON
 
+
 class Recipe(Base):
     __tablename__ = 'recipe'
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4, index=True)
@@ -21,6 +22,8 @@ class Recipe(Base):
         CheckConstraint('likes >= 0', name='likes_non_negative'),
         CheckConstraint('dislikes >= 0', name='dislikes_non_negative')
     )
+
+
 class User(Base):
     __tablename__ = 'user'
     user_id: Mapped[str] = mapped_column(primary_key=True, index=True)
