@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 
-
 class RecipePost(BaseModel):
     recipe_title: str
     ingredients: list[str]

@@ -1,4 +1,6 @@
 from pydantic_settings import  BaseSettings, SettingsConfigDict
+from src.logger import logger
+
 
 class Settings(BaseSettings):
     BOT_TOKEN: str
@@ -16,4 +18,8 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file='config/.env', env_file_encoding='utf-8')
 
-settings = Settings()
+try:
+    settings = Settings()
+    logger.info('Настройки успешно загружены')
+except Exception as e:
+    logger.error(f'Ошибка загрузки настроек: {e}')
