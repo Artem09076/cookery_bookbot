@@ -6,6 +6,8 @@ from aiogram import Dispatcher, Bot
 from aiogram.fsm.storage.redis import RedisStorage
 from fastapi import FastAPI
 from sqlalchemy.util import await_only
+from aiogram.exceptions import TelegramAPIError, TelegramUnauthorizedError, TelegramNetworkError, TelegramServerError, TelegramRetryAfter
+
 
 from config.settings import settings
 from script.init_db import init_models
@@ -30,8 +32,18 @@ async def lifespan(app: FastAPI):
     try:
         await bot.set_webhook(settings.BOT_WEBHOOK_URL)
         logger.info(f'Webhook установлен на {settings.BOT_WEBHOOK_URL}')
+    except TelegramUnauthorizedError as e:
+        logger.error(f'Ошибка 401: Неверный токен или бот не авторизован: {e}')
+    except TelegramAPIError as e:
+        logger.error(f'Ошибка API Telegram при установке webhook: {e}')
+    except TelegramNetworkError as e:
+        logger.error(f'Ошибка сети Telegram при установке webhook: {e}')
+    except TelegramServerError as e:
+        logger.error(f'Ошибка сервера Telegram при установке webhook: {e}')
+    except TelegramRetryAfter as e:
+        logger.error(f'Слишком много запросов, повторите попытку через {e.retry_after} секунд: {e}')
     except Exception as e:
-        logger.error(f'Ошибка при установке webhook: {e}')
+        logger.error(f'Непредвиденная ошибка при установке webhook: {e}')
 
     yield
 
@@ -39,8 +51,15 @@ async def lifespan(app: FastAPI):
     try:
         await bot.delete_webhook()
         logger.info('Webhook удалён.')
+    except TelegramAPIError as e:
+        logger.error(f'Ошибка API Telegram при удалении webhook: {e}')
+    except TelegramNetworkError as e:
+        logger.error(f'Ошибка сети Telegram при удалении webhook: {e}')
+    except TelegramServerError as e:
+        logger.error(f'Ошибка сервера Telegram при удалении webhook: {e}')
     except Exception as e:
-        logger.error(f'Ошибка при удалении webhook: {e}')
+        logger.error(f'Непредвиденная ошибка при удалении webhook: {e}')
+
 
 
 def create_app() -> FastAPI:
@@ -68,8 +87,18 @@ async def start_polling():
         await bot.delete_webhook()
         await dp.start_polling(bot)
         logger.info('Polling запущен.')
+    except TelegramUnauthorizedError as e:
+        logger.error(f'Ошибка 401: Неверный токен или бот не авторизован: {e}')
+    except TelegramAPIError as e:
+        logger.error(f'Ошибка API Telegram при запуске polling: {e}')
+    except TelegramNetworkError as e:
+        logger.error(f'Ошибка сети Telegram при запуске polling: {e}')
+    except TelegramServerError as e:
+        logger.error(f'Ошибка сервера Telegram при запуске polling: {e}')
+    except TelegramRetryAfter as e:
+        logger.error(f'Слишком много запросов, повторите попытку через {e.retry_after} секунд: {e}')
     except Exception as e:
-        logger.error(f'Ошибка при запуске polling: {e}')
+        logger.error(f'Непредвиденная ошибка при запуске polling: {e}')
 
 
 if __name__ == '__main__':
