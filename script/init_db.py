@@ -13,8 +13,7 @@ async def init_models():
         logger.info('Инициализация базы данных прошла успешно.')
     except IntegrityError:
         logger.warning('База данных уже существует. Повторная инициализация не требуется.')
-    except Exception as e:
-        logger.exception(f'Ошибка при инициализации базы данных: {e}')
+
 
 if __name__ == '__main__':
     asyncio.run(init_models())

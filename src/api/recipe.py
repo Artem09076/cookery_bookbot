@@ -18,7 +18,6 @@ async def get_receipts(session: AsyncSession = Depends(get_db)):
     res = []
     for recipe in receipts.all():
         res.append(recipe[0].__dict__)
-    logger.info(f'Найдено рецептов: {len(res)} [correlation_id: {correlation_id}]')
     return {'receipts': res}
 
 @router.post('/receipts', response_model=RecipeResponse)
