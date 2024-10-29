@@ -1,34 +1,44 @@
+import msgpack
+from aio_pika import ExchangeType
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.exceptions import TelegramAPIError, DetailedAiogramError, TelegramNetworkError, TelegramUnauthorizedError, TelegramServerError
 import asyncio
+import aio_pika
 
-
+from config.settings import settings
 from src.handlers.command.router import router
 from src.logger import set_correlation_id, logger
+from src.storage.rabbit import channel_pool
 
 
 @router.message(Command('start'))
 async def start(message: Message):
-    correlation_id = set_correlation_id()
-    logger.info(f'Команда /start получена от пользователя: {message.from_user.id}, Correlation ID: {correlation_id}')
-    try:
-        await message.answer('Hello')
-        logger.info(f'Сообщение отправлено пользователю {message.from_user.id}')
-    except TelegramUnauthorizedError as e:
-        logger.error(f'Ошибка при отправке сообщения, токен бота недействителен {e.message}. Пользователь {message.from_user.id}. Correlation ID: {correlation_id}')
+    await message.answer('Hello')
+    async with channel_pool.acquire() as channel: # type: aio_pika.Channel
+        exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
+        queue = await channel.declare_queue(
+            settings.USER_QUEUE.format(user_id=message.from_user.id),
+            durable=True
+        )
+        user_queue = await channel.declare_queue(
+            'user_messages',
+            durable=True
+        )
 
-    except TelegramNetworkError as e:
-        logger.error(f'Ошибка сети {e.message} при отправке сообщения пользователю {message.from_user.id}. Correlation ID: {correlation_id}')
+        await queue.bind(exchange,
+                         settings.USER_QUEUE.format(user_id=message.from_user.id)
+                         )
 
-    except asyncio.TimeoutError:
-        logger.error(f'Время ожидания истекло при отправке сообщения пользователю {message.from_user.id}. Correlation ID: {correlation_id}')
-    
-    except TelegramServerError as e:
-        logger.error(f'Ошибка сервера Telegram {e.message} при отправке сообщения. Пользователь {message.from_user.id}. Correlation ID: {correlation_id}')
+        await user_queue.bind(exchange, 'user_messages')
 
-    except TelegramAPIError as e:
-        logger.error(f'Ошибка API Telegram {e.message} при отправке сообщения пользователю {message.from_user.id}. Correlation ID: {correlation_id}')
-    
-    except DetailedAiogramError as e:
-        logger.error(f'Неизвестная ошибка {e.message} при отправке сообщения пользователю {message.from_user.id}. Correlation ID: {correlation_id}')
+        body = {
+            'user_id': message.from_user.id,
+            'action': 'login'
+        }
+
+        await exchange.publish(
+            aio_pika.Message(msgpack.packb(body)),
+            'user_messages'
+        )
+

@@ -26,7 +26,7 @@ class Recipe(Base):
 
 class User(Base):
     __tablename__ = 'user'
-    user_id: Mapped[str] = mapped_column(primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(primary_key=True, index=True)
     registered: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.utcnow, nullable=False)
 
     recipes: Mapped[List[Recipe]] = relationship('Recipe', back_populates='user', cascade='all, delete-orphan')

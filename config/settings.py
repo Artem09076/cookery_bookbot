@@ -31,8 +31,6 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file='config/.env', env_file_encoding='utf-8')
 
-try:
-    settings = Settings()
-    logger.info('Настройки успешно загружены')
-except Exception as e:
-    logger.error(f'Ошибка загрузки настроек: {e}')
+
+settings = Settings()
+

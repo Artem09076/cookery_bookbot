@@ -2,3 +2,5 @@ config/.env
 temp.py
 *__pycache__*
 script/init_db.py
+docs
+alembic.ini
