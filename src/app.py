@@ -6,7 +6,7 @@ from fastapi import FastAPI
 
 
 from config.settings import settings
-from src.api.login import router
+from src.api.router import router
 from src.bot import setup_dp, setup_bot
 from src.storage.redis import setup_redis
 from src.logger import set_correlation_id
