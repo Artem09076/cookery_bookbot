@@ -1,6 +1,4 @@
 import logging.config
-from contextlib import suppress
-import yaml
 from uuid import uuid4
 from contextvars import ContextVar
 

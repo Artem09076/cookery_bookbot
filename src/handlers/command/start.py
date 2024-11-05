@@ -10,11 +10,12 @@ from config.settings import settings
 from src.handlers.command.router import router
 from src.logger import set_correlation_id, logger
 from src.storage.rabbit import channel_pool
+from src.templates.env import render
 
 
 @router.message(Command('start'))
 async def start(message: Message):
-    await message.answer('Hello')
+    await message.answer(render('start.jinja2'))
     async with channel_pool.acquire() as channel: # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
         queue = await channel.declare_queue(
@@ -41,4 +42,3 @@ async def start(message: Message):
             aio_pika.Message(msgpack.packb(body)),
             'user_messages'
         )
-

@@ -1,6 +1,8 @@
 import uvicorn
 import asyncio
 from aiogram import Dispatcher, Bot
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
 from fastapi import FastAPI
 
@@ -47,19 +49,19 @@ async def start_polling():
     storage = RedisStorage(redis)
 
     dp = Dispatcher(storage=storage)
-    setup_dp(dp)
-
     dp.include_router(command_router)
 
-    bot = Bot(settings.BOT_TOKEN)
+    setup_dp(dp)
+    default = DefaultBotProperties(parse_mode=ParseMode.HTML)
+    bot = Bot(settings.BOT_TOKEN, default=default)
     setup_bot(bot)
 
     await bot.delete_webhook()
     await dp.start_polling(bot)
     logger.info('Завершение режима polling...')
 
+
 if __name__ == '__main__':
-    # asyncio.run(init_models())
     if settings.BOT_WEBHOOK_URL:
         logger.info('Запуск приложения с webhook...')
         uvicorn.run('src.app:create_app', factory=True, host='0.0.0.0', port=8000, workers=1)

@@ -6,11 +6,6 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, async_sessi
 from src.logger import logger
 from config.settings import settings
 
-from src.model.meta import Base
-
-import asyncio
-
-
 
 def create_engine() -> AsyncEngine:
     logger.info('Создание движка для подключения к базе данных')
