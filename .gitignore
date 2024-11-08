@@ -4,3 +4,4 @@ temp.py
 script/init_db.py
 docs
 alembic.ini
+.idea
