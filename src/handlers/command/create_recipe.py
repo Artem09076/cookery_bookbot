@@ -1,3 +1,5 @@
+import re
+
 import aio_pika
 import msgpack
 from aio_pika import ExchangeType
@@ -10,6 +12,8 @@ from aiogram import F
 from src.handlers.state.recipe import RecipeGroup
 from src.storage.rabbit import channel_pool
 
+INGREDIENTS_REGEX = r'^\s*([а-яА-ЯёЁa-zA-Z]+\s*)(,\s*[а-яА-ЯёЁa-zA-Z]+\s*)*$'
+
 
 @router.callback_query(F.data == 'new_receipt')
 async def create_recipe(call: CallbackQuery, state: FSMContext):
@@ -19,12 +23,18 @@ async def create_recipe(call: CallbackQuery, state: FSMContext):
 
 @router.message(F.text, RecipeGroup.recipe_title)
 async def create_recipe(message: Message, state: FSMContext):
-    await state.update_data(recipe_title=message.text)
-    await message.answer('Спасибо! А теперь какие ингредиенты нам нужны')
-    await state.set_state(RecipeGroup.ingredients)
+    if not message.text.isdigit():
+        await state.update_data(recipe_title=message.text)
+        await message.answer('Спасибо! А теперь какие ингредиенты нам нужны')
+        await state.set_state(RecipeGroup.ingredients)
+    else:
+        await message.answer('Кажется вы ввели число. Напишите название рецепта')
 
 @router.message(F.text, RecipeGroup.ingredients)
 async def create_recipe(message: Message, state: FSMContext):
+    if not re.match(INGREDIENTS_REGEX, message.text):
+        await message.answer('Пожалуйста, введите список ингредиентов в формате: продукт1, продукт2, ...')
+        return
     await state.update_data(ingredients=message.text)
     await message.answer('Потрясающе! Опишите процесс готовки')
     await state.set_state(RecipeGroup.description_recipe)
@@ -51,6 +61,7 @@ async def create_recipe(message: Message, state: FSMContext):
 async def create_recipe(call: CallbackQuery, state: FSMContext):
     async with channel_pool.acquire() as channel: # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
+
         user_queue = await channel.declare_queue(
             'user_messages',
             durable=True

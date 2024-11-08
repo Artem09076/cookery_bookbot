@@ -12,7 +12,7 @@ async def main() -> None:
 
 
         async with queue.iterator() as queue_iter:
-            async for message in queue_iter: # type: aio_pika.Message
+            async for message in queue_iter: # type: aio_pika.IncomingMessage
                 async with message.process():
                     body = msgpack.unpackb(message.body)
                     await handle_event_distribution(body)
