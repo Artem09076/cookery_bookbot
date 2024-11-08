@@ -12,6 +12,7 @@ class Recipe(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4, index=True)
     recipe_title: Mapped[str]
     ingredients: Mapped[list[str]] = mapped_column(JSON, nullable=False)
+    description_recipe: Mapped[str]
     likes: Mapped[int] = mapped_column(default=0)
     dislikes: Mapped[int] = mapped_column(default=0)
     user_id: Mapped[UUID] = mapped_column(ForeignKey('user.user_id'), nullable=False)
@@ -28,5 +29,4 @@ class User(Base):
     __tablename__ = 'user'
     user_id: Mapped[int] = mapped_column(primary_key=True, index=True)
     registered: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.utcnow, nullable=False)
-
     recipes: Mapped[List[Recipe]] = relationship('Recipe', back_populates='user', cascade='all, delete-orphan')

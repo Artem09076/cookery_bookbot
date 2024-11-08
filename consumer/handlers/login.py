@@ -6,7 +6,7 @@ from src.model.model import User
 
 async def login(body):
     async with async_session() as db:
-        user = User(user_id=body['user_id'])
+        user = User(user_id=body.get('user_id'))
         db.add(user)
 
         try:
