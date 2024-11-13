@@ -4,3 +4,5 @@ temp.py
 script/init_db.py
 docs
 alembic.ini
+consumer/handlers/all_ids.py
+src/handlers/command/admin.py
