@@ -18,6 +18,18 @@ class Recipe(Base):
     user_id: Mapped[UUID] = mapped_column(ForeignKey('user.user_id'), nullable=False)
     user = relationship('User', back_populates='recipes')
 
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'recipe_title': self.recipe_title,
+            'ingredients': self.ingredients,
+            'description_recipe': self.description_recipe,
+            'likes': self.likes,
+            'dislikes': self.dislikes,
+            'user_id': str(self.user_id)
+        }
+
+
     __table_args__ = (
         CheckConstraint('length(recipe_title) < 1000', name='recipe_title_length'),
         CheckConstraint('likes >= 0', name='likes_non_negative'),

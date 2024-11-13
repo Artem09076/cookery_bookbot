@@ -1,3 +1,7 @@
-{% for recipe in res %}
-<b>Название</b>: {{ recipe["recipe_title"] }}
-{% endfor %}
+{% if res %}
+    {% for recipe in res %}
+    <b>Название</b>: {{ recipe["recipe_title"] }}
+    {% endfor %}
+{% else %}
+    <b>У вас нет рецептов, воспользуйтесь соответствующей кнопкой, чтобы создать</b>
+{% endif %}

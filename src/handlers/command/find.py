@@ -1,16 +1,14 @@
 import msgpack
 from aio_pika import ExchangeType
+from aio_pika.exceptions import QueueEmpty
 from aiogram.filters import Command
-from aiogram.fsm.context import FSMContext
+
 from aiogram.types import Message
-from aiogram.exceptions import TelegramAPIError, DetailedAiogramError, TelegramNetworkError, TelegramUnauthorizedError, TelegramServerError
 import asyncio
 import aio_pika
 
 from config.settings import settings
 from src.handlers.command.router import router
-from src.handlers.state.auth import AuthGroup
-from src.logger import set_correlation_id, logger
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
@@ -45,13 +43,13 @@ async def find(message: Message):
             'user_messages'
         )
 
-
-        res = await queue.get()
-        recipes = msgpack.unpackb(body)
-        await  message.answer(render('find.jinja2', res=recipes['recipes']))
-
-
-
-
-
-
+        retries = 3
+        for _ in range(retries):
+            try:
+                res = await queue.get()
+                await res.ack()
+                recipes = msgpack.unpackb(res.body)
+                await  message.answer(render('find.jinja2', res=recipes['recipes']))
+                return
+            except QueueEmpty:
+                await asyncio.sleep(1)

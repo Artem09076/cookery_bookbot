@@ -14,6 +14,8 @@ from src.storage.redis import setup_redis
 from src.logger import set_correlation_id
 from src.log_config import logging
 from src.handlers.command.router import router as command_router
+from src.handlers.callback.router import router as callback_router
+from src.handlers.message.router import router as message_router
 
 logger = logging.getLogger('backend_logger')
 
@@ -21,6 +23,8 @@ logger = logging.getLogger('backend_logger')
 async def lifespan(app: FastAPI):
     dp = Dispatcher()
     dp.include_router(command_router)
+    dp.include_router(callback_router)
+    dp.include_router(message_router)
     setup_dp(dp)
     bot = Bot(settings.BOT_TOKEN)
     setup_bot(bot)
@@ -50,6 +54,8 @@ async def start_polling():
 
     dp = Dispatcher(storage=storage)
     dp.include_router(command_router)
+    dp.include_router(callback_router)
+    dp.include_router(message_router)
 
     setup_dp(dp)
     default = DefaultBotProperties(parse_mode=ParseMode.HTML)

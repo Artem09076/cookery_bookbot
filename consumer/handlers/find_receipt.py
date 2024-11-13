@@ -19,7 +19,6 @@ async def find_receipt(body):
                 for recipe in recipes
             ]
         }
-
     async with channel_pool.acquire() as channel:
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
 

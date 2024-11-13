@@ -1,0 +1,7 @@
+<b>Название рецепта</b> {{ recipe['recipe_title'] }}
+<b>Ингредиенты</b>
+{% for ingredient in recipe['ingredients'] %}
+{{ ingredient }}
+{% endfor %}
+<b>Готовка</b>
+{{ recipe['description_recipe'] }}

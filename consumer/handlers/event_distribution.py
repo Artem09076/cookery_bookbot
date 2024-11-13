@@ -1,4 +1,6 @@
 from consumer.handlers.create_recipe import create_recipe
+from consumer.handlers.get_receipts import get_receipts
+from consumer.handlers.like_dislike import like_dislike
 from consumer.handlers.login import login
 from consumer.handlers.find_receipt import find_receipt
 
@@ -10,3 +12,9 @@ async def handle_event_distribution(body):
             await create_recipe(body)
         case 'find':
             await find_receipt(body)
+        case 'get_receipts':
+            await get_receipts(body)
+        case 'like':
+            await like_dislike(body)
+        case 'dislike':
+            await like_dislike(body)

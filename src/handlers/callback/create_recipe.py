@@ -6,7 +6,7 @@ from aio_pika import ExchangeType
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, InlineKeyboardButton, InlineKeyboardMarkup
 
-from src.handlers.command.router import router
+from src.handlers.callback.router import router
 from aiogram import F
 
 from src.handlers.state.recipe import RecipeGroup

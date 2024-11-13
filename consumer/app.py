@@ -6,7 +6,7 @@ from consumer.handlers.event_distribution import handle_event_distribution
 async def main() -> None:
     queue_name = 'user_messages'
     async with channel_pool.acquire() as channel: # type: aio_pika.Channel
-        await channel.set_qos(prefetch_count=1)
+        await channel.set_qos(prefetch_count=10, )
 
         queue = await channel.declare_queue(queue_name, durable=True)
 
