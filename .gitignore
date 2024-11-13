@@ -6,3 +6,5 @@ docs
 alembic.ini
 consumer/handlers/all_ids.py
 src/handlers/command/admin.py
+alembic.ini
+.idea
