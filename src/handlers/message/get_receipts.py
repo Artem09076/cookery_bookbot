@@ -108,7 +108,6 @@ async def handle_pagination(callback_query, state: FSMContext):
     recipes = data.get('recipes', [])
     total_pages = len(recipes)
 
-    # Определяем новую страницу из callback_data
     new_page = int(callback_query.data.split('_')[1])
     if new_page < 1 or new_page > total_pages:
         await callback_query.answer("Некорректная страница.")
