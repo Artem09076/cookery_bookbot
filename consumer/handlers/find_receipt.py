@@ -15,7 +15,7 @@ async def find_receipt(body):
         recipes = result.scalars().all()
         response_body = {
             'recipes': [
-                {"recipe_title": recipe.recipe_title}
+                recipe.to_dict()
                 for recipe in recipes
             ]
         }
