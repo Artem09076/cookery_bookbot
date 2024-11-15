@@ -11,8 +11,6 @@ from config.settings import settings
 
 async def on_message(body):
     action = body.get('action')
-    print(body)
-
     if action == 'info_receipts':
         recipe_id = body.get('recipe_id')
 
@@ -43,6 +41,3 @@ async def on_message(body):
                 aio_pika.Message(msgpack.packb(response_body)),
                 routing_key=settings.USER_QUEUE.format(user_id=user_id)
             )
-            print(response_body)
-
-

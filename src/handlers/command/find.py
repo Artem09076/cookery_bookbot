@@ -90,13 +90,11 @@ async def request_recipe_info(call: CallbackQuery):
             'action': 'info_receipts',
             'user_id': call.from_user.id
         }
-        print(body)
 
         await exchange.publish(
             aio_pika.Message(msgpack.packb(body)),
             'user_messages'
         )
-        print(body)
 
         retries = 3
         for _ in range(retries):
