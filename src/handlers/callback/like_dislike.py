@@ -10,7 +10,7 @@ from aiogram import F
 from src.storage.rabbit import channel_pool
 
 
-@router.callback_query(F.data.startswith('like_') or F.data.startswith('dislike_'))
+@router.callback_query(F.data.startswith('like_') | F.data.startswith('dislike_'))
 async def handle_like(call: CallbackQuery):
     action, recipe_id = call.data.split("_")
     async with channel_pool.acquire() as channel: # type: aio_pika.Channel

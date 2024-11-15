@@ -15,9 +15,7 @@ async def handle_event_distribution(body):
             await find_receipt(body)
         case 'get_receipts':
             await get_receipts(body)
-        case 'like':
-            await like_dislike(body)
-        case 'dislike':
+        case 'like' | 'dislike':
             await like_dislike(body)
         case 'info_receipts':
             await on_message(body)
