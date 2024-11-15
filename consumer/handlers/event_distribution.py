@@ -3,6 +3,7 @@ from consumer.handlers.get_receipts import get_receipts
 from consumer.handlers.like_dislike import like_dislike
 from consumer.handlers.login import login
 from consumer.handlers.find_receipt import find_receipt
+from consumer.handlers.get_info_ab_receipt import on_message
 
 async def handle_event_distribution(body):
     match body['action']:
@@ -18,3 +19,5 @@ async def handle_event_distribution(body):
             await like_dislike(body)
         case 'dislike':
             await like_dislike(body)
+        case 'info_receipts':
+            await on_message(body)
