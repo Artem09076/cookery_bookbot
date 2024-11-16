@@ -8,16 +8,8 @@ async def like_dislike(body):
     recipe_id = body['recipe_id']
     async with async_session() as db:
         if body['action'] == 'like':
-            stmt = (
-                update(Recipe)
-                .where(Recipe.id == recipe_id)
-                .values(likes=Recipe.likes + 1)
-            )
+            stmt = update(Recipe).where(Recipe.id == recipe_id).values(likes=Recipe.likes + 1)
         else:
-            stmt = (
-                update(Recipe)
-                .where(Recipe.id == recipe_id)
-                .values(dislikes=Recipe.dislikes + 1)
-            )
+            stmt = update(Recipe).where(Recipe.id == recipe_id).values(dislikes=Recipe.dislikes + 1)
         await db.execute(stmt)
         await db.commit()

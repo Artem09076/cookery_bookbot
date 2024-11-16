@@ -1,12 +1,12 @@
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.future import select
-from consumer.storage.db import async_session
-from src.model.model import Recipe, User
 import aio_pika
 import msgpack
 from aio_pika import ExchangeType
-from src.storage.rabbit import channel_pool
+from sqlalchemy.future import select
+
 from config.settings import settings
+from consumer.storage.db import async_session
+from src.model.model import Recipe
+from src.storage.rabbit import channel_pool
 
 
 async def on_message(body):
@@ -19,7 +19,7 @@ async def on_message(body):
             rec = result.scalar_one_or_none()
 
             if rec:
-               response_body = {'recipe': rec.to_dict()}
+                response_body = {'recipe': rec.to_dict()}
             else:
                 response_body = {'recipe': None}
 
@@ -27,10 +27,7 @@ async def on_message(body):
             user_id = body.get('user_id')
             exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
 
-            queue = await channel.declare_queue(
-                settings.USER_QUEUE.format(user_id=user_id),
-                durable=True
-            )
+            queue = await channel.declare_queue(settings.USER_QUEUE.format(user_id=user_id), durable=True)
 
             await queue.bind(
                 exchange,
@@ -38,6 +35,5 @@ async def on_message(body):
             )
 
             await exchange.publish(
-                aio_pika.Message(msgpack.packb(response_body)),
-                routing_key=settings.USER_QUEUE.format(user_id=user_id)
+                aio_pika.Message(msgpack.packb(response_body)), routing_key=settings.USER_QUEUE.format(user_id=user_id)
             )
