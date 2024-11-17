@@ -2,8 +2,9 @@ from consumer.handlers.create_recipe import create_recipe
 from consumer.handlers.get_receipts import get_receipts
 from consumer.handlers.like_dislike import like_dislike
 from consumer.handlers.login import login
-from consumer.handlers.all_ids import admin
 from consumer.handlers.find_receipt import find_receipt
+from consumer.handlers.get_popular_recipe import get_popular_recipe
+
 
 async def handle_event_distribution(body):
     match body['action']:
@@ -19,5 +20,5 @@ async def handle_event_distribution(body):
             await like_dislike(body)
         case 'dislike':
             await like_dislike(body)
-        # case 'admin':
-        #     await admin(body)
+        case 'get_popular_recipe':
+            await get_popular_recipe(body)

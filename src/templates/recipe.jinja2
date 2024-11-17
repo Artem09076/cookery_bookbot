@@ -1,7 +1,9 @@
-<b>Название рецепта</b> {{ recipe['recipe_title'] }}
-<b>Ингредиенты</b>
+<b>Название рецепта:</b> {{ recipe['recipe_title'] }}
+<b>Ингредиенты:</b>
 {% for ingredient in recipe['ingredients'] %}
-{{ ingredient }}
+- {{ ingredient }}
 {% endfor %}
-<b>Готовка</b>
+<b>Готовка:</b>
 {{ recipe['description_recipe'] }}
+<b>Лайки:</b> {{ recipe['likes'] }}
+<b>Дизлайки:</b> {{ recipe['dislikes'] }}
