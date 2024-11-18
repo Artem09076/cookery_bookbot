@@ -2,14 +2,21 @@ from collections.abc import AsyncGenerator
 
 from asyncpg import Connection
 from sqlalchemy import AsyncAdaptedQueuePool
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, async_sessionmaker, AsyncSession
-from src.logger import logger
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
+
 from config.settings import settings
+from src.logger import logger
 
 
 def create_engine() -> AsyncEngine:
     logger.info('Создание движка для подключения к базе данных')
-    return create_async_engine(settings.db_url, poolclass = AsyncAdaptedQueuePool, connect_args={'connection_class': Connection,})
+    return create_async_engine(
+        settings.db_url,
+        poolclass=AsyncAdaptedQueuePool,
+        connect_args={
+            'connection_class': Connection,
+        },
+    )
 
 
 def create_session(_engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:

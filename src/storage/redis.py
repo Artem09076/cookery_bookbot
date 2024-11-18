@@ -1,9 +1,10 @@
-from redis.asyncio import Redis, ConnectionPool
+from redis.asyncio import ConnectionPool, Redis
 
 from config.settings import settings
 from src.logger import logger
 
 redis: Redis
+
 
 def setup_redis():
     logger.info('Настройка подключения к Redis')
@@ -13,6 +14,7 @@ def setup_redis():
     redis = redis_
     logger.info('Подключение к Redis установлено')
     return redis
+
 
 def get_redis() -> Redis:
     logger.debug('Получение экземпляра Redis')
