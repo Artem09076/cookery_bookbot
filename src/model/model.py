@@ -1,10 +1,11 @@
-from sqlalchemy import ForeignKey, CheckConstraint, TIMESTAMP
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from uuid import UUID, uuid4
-from typing import List
 from datetime import datetime
+from typing import List
+from uuid import UUID, uuid4
+
+from sqlalchemy import JSON, TIMESTAMP, CheckConstraint, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from src.model.meta import Base
-from sqlalchemy import JSON
 
 
 class Recipe(Base):
@@ -26,14 +27,13 @@ class Recipe(Base):
             'description_recipe': self.description_recipe,
             'likes': self.likes,
             'dislikes': self.dislikes,
-            'user_id': str(self.user_id)
+            'user_id': str(self.user_id),
         }
-
 
     __table_args__ = (
         CheckConstraint('length(recipe_title) < 1000', name='recipe_title_length'),
         CheckConstraint('likes >= 0', name='likes_non_negative'),
-        CheckConstraint('dislikes >= 0', name='dislikes_non_negative')
+        CheckConstraint('dislikes >= 0', name='dislikes_non_negative'),
     )
 
 

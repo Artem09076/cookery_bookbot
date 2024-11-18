@@ -1,6 +1,5 @@
-from sqlalchemy.orm import  DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.schema import MetaData
-
 
 NAMING_CONVENTION = {
     'ix': 'ix_%(column_0_label)s',
@@ -14,6 +13,7 @@ NAMING_CONVENTION = {
 DEFAULT_SCHEMA = 'public'
 
 metadata = MetaData(naming_convention=NAMING_CONVENTION, schema=DEFAULT_SCHEMA)
+
 
 class Base(DeclarativeBase):
     metadata = metadata

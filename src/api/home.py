@@ -2,8 +2,8 @@ from aiogram.types import Update
 from starlette.requests import Request
 
 from src.api.router import router
-from src.bot import get_dp, get_bot
-from src.logger import set_correlation_id, logger
+from src.bot import get_bot, get_dp
+from src.logger import logger, set_correlation_id
 
 
 @router.post('/home')

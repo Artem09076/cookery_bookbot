@@ -1,0 +1,11 @@
+🍲 <b>{{ recipe.recipe_title }}</b>
+
+<b>Ингредиенты:</b>
+{% for ingredient in recipe.ingredients %}
+▫️ {{ ingredient }}
+{% endfor %}
+
+<b>Описание:</b>
+📜 {{ recipe.description_recipe }}
+
+👍 {{ recipe.likes }} | 👎 {{ recipe.dislikes }}

@@ -1,9 +1,8 @@
 import logging.config
-from uuid import uuid4
 from contextvars import ContextVar
+from uuid import uuid4
 
-correlation_id_context: ContextVar[str] = ContextVar(
-    'correlation_id', default='N/A')
+correlation_id_context: ContextVar[str] = ContextVar('correlation_id', default='N/A')
 
 
 class ConsoleFormatter(logging.Formatter):

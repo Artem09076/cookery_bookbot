@@ -1,9 +1,10 @@
+import asyncio
+
 from sqlalchemy.exc import IntegrityError
 
-from src.storage.db import engine
-from src.model.meta import Base
-import asyncio
 from src.logger import logger
+from src.model.meta import Base
+from src.storage.db import engine
 
 
 async def init_models():

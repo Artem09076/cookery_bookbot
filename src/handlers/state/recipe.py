@@ -1,4 +1,4 @@
-from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.state import State, StatesGroup
 
 
 class RecipeGroup(StatesGroup):
@@ -6,6 +6,7 @@ class RecipeGroup(StatesGroup):
     ingredients = State()
     description_recipe = State()
     check_state = State()
+
 
 class RecipeForm(StatesGroup):
     waiting_for_ingredients = State()
