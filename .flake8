@@ -11,6 +11,7 @@ exclude =
     external_integration,
     backend_utils,
     pypoetry
+    migration
 
 # Ignoring:
 # E203: white space before ':'. Because it's not black compatible

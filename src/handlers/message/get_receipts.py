@@ -11,6 +11,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config.settings import settings
 from src.handlers.message.router import router
 from src.handlers.state.recipe import RecipeForm
+from src.metrics import track_latency, SEND_MESSAGE
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
@@ -46,6 +47,7 @@ async def show_recipe(message: Message, state: FSMContext):
 
 
 @router.message(F.text.lower() == 'подобрать рецепт', RecipeForm.ingredients_collected)
+@track_latency
 async def get_receipts(message: Message, state: FSMContext):
     data = await state.get_data()
 
@@ -61,6 +63,9 @@ async def get_receipts(message: Message, state: FSMContext):
         body = {'user_id': message.from_user.id, 'ingredients': data.get('ingredients', []), 'action': 'get_receipts'}
 
         await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
+
+        SEND_MESSAGE.inc()
+
         retries = 3
         for _ in range(retries):
             try:
@@ -82,6 +87,7 @@ async def get_receipts(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith('page_'))
+@track_latency
 async def handle_pagination(callback_query, state: FSMContext):
     data = await state.get_data()
     recipes = data.get('recipes', [])

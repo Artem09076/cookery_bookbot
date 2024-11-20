@@ -8,10 +8,12 @@ from aiogram.types import Message
 from config.settings import settings
 from src.handlers.command.router import router
 from src.handlers.state.auth import AuthGroup
+from src.metrics import track_latency, SEND_MESSAGE
 from src.storage.rabbit import channel_pool
 
 
 @router.message(Command('login'))
+@track_latency
 async def login(message: Message, state: FSMContext):
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
@@ -25,6 +27,8 @@ async def login(message: Message, state: FSMContext):
         body = {'user_id': message.from_user.id, 'action': 'login'}
 
         await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
+
+        SEND_MESSAGE.inc()
 
     await state.set_state(AuthGroup.authorized)
 

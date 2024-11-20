@@ -15,6 +15,7 @@ from src.handlers.command.router import router as command_router
 from src.handlers.message.router import router as message_router
 from src.log_config import logging
 from src.logger import set_correlation_id
+from src.metrics import RPSTrackerMiddleware
 from src.storage.redis import setup_redis
 
 logger = logging.getLogger('backend_logger')
@@ -42,6 +43,7 @@ def create_app() -> FastAPI:
     correlation_id = set_correlation_id()
     app = FastAPI(docs_url='/swagger', lifespan=lifespan)
     app.include_router(router)
+    app.add_middleware(RPSTrackerMiddleware)
     logger.info(f'Приложение создано [{correlation_id}]')
     return app
 

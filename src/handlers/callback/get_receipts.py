@@ -8,9 +8,11 @@ from src.handlers.callback.router import router
 from aiogram import F
 
 from src.handlers.state.recipe import RecipeForm
+from src.metrics import track_latency
 
 
 @router.callback_query(F.data == 'get_receipts')
+@track_latency
 async def get_receipts(call: CallbackQuery, state: FSMContext):
     await call.message.answer('Пожалуйста напишите через запятую имеющиеся продукты')
 
@@ -18,6 +20,7 @@ async def get_receipts(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(F.text, RecipeForm.waiting_for_ingredients)
+@track_latency
 async def create_recipe(message: Message, state: FSMContext):
     if not re.match(INGREDIENTS_REGEX, message.text):
         await message.answer('Пожалуйста, введите список ингредиентов в формате: продукт1, продукт2, ...')
