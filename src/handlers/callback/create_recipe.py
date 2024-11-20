@@ -21,7 +21,6 @@ async def create_recipe(call: CallbackQuery, state: FSMContext):
     await call.message.answer('Введите пожалуйста название рецепта')
     await state.set_state(RecipeGroup.recipe_title)
 
-
 @router.message(F.text, RecipeGroup.recipe_title)
 async def create_recipe(message: Message, state: FSMContext):
     if not message.text.isdigit():
@@ -31,7 +30,6 @@ async def create_recipe(message: Message, state: FSMContext):
     else:
         await message.answer('Кажется вы ввели число. Напишите название рецепта')
 
-
 @router.message(F.text, RecipeGroup.ingredients)
 async def create_recipe(message: Message, state: FSMContext):
     if not re.match(INGREDIENTS_REGEX, message.text):
@@ -40,7 +38,6 @@ async def create_recipe(message: Message, state: FSMContext):
     await state.update_data(ingredients=message.text)
     await message.answer('Потрясающе! Опишите процесс готовки')
     await state.set_state(RecipeGroup.description_recipe)
-
 
 @router.message(F.text, RecipeGroup.description_recipe)
 async def create_recipe(message: Message, state: FSMContext):
@@ -60,10 +57,9 @@ async def create_recipe(message: Message, state: FSMContext):
     await message.answer(caption, reply_markup=keyboard)
     await state.set_state(RecipeGroup.check_state)
 
-
 @router.callback_query(F.data == 'correct', RecipeGroup.check_state)
 async def create_recipe(call: CallbackQuery, state: FSMContext):
-    async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
+    async with channel_pool.acquire() as channel: # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
 
         user_queue = await channel.declare_queue(
@@ -84,6 +80,7 @@ async def create_recipe(call: CallbackQuery, state: FSMContext):
             'action': 'create_recipe'
         }
 
+
         await exchange.publish(
             aio_pika.Message(msgpack.packb(body)),
             'user_messages'
@@ -94,10 +91,11 @@ async def create_recipe(call: CallbackQuery, state: FSMContext):
     await call.message.answer('Благодарю за регистрацию. Ваши данные успешно сохранены!')
     await state.clear()
 
-
 @router.callback_query(F.data == 'incorrect', RecipeGroup.check_state)
 async def create_recipe(call: CallbackQuery, state: FSMContext):
     await call.answer('Запускаем сценарий с начала')
     await call.message.edit_reply_markup(reply_markup=None)
     await call.message.answer('Введите пожалуйста название рецепта')
     await state.set_state(RecipeGroup.recipe_title)
+
+

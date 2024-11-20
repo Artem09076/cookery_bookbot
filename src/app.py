@@ -1,21 +1,21 @@
-import uvicorn
 import asyncio
-from aiogram import Dispatcher, Bot
+
+import uvicorn
+from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import RedisStorage
 from fastapi import FastAPI
 
-
 from config.settings import settings
 from src.api.router import router
-from src.bot import setup_dp, setup_bot
-from src.storage.redis import setup_redis
-from src.logger import set_correlation_id
-from src.log_config import logging
-from src.handlers.command.router import router as command_router
+from src.bot import setup_bot, setup_dp
 from src.handlers.callback.router import router as callback_router
+from src.handlers.command.router import router as command_router
 from src.handlers.message.router import router as message_router
+from src.log_config import logging
+from src.logger import set_correlation_id
+from src.storage.redis import setup_redis
 
 logger = logging.getLogger('backend_logger')
 
@@ -32,7 +32,6 @@ async def lifespan(app: FastAPI):
     logger.info('Устанавливается webhook для бота...')
     await bot.set_webhook(settings.BOT_WEBHOOK_URL)
     logger.info(f'Webhook установлен на {settings.BOT_WEBHOOK_URL}')
-
 
     yield
 
