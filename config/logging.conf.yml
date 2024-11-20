@@ -3,7 +3,7 @@ disable_existing_loggers: no
 formatters:
   console_formatter:
     (): src.logger.ConsoleFormatter
-    format: "%(levelname)s [%(name)s] [%(correlation_id)s] %(message)s"
+    format: "%(levelname)-8s | [%(name)s] | %(message)s (%(filename)s:%(lineno)d)"
     datefmt: "%Y-%m-%d %H:%M:%S"
 
 handlers:
@@ -20,3 +20,11 @@ loggers:
 root:
   level: INFO
   handlers: [console_handler]
+
+
+
+
+
+
+
+

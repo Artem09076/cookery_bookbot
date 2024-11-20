@@ -1,9 +1,7 @@
 import msgpack
 from aio_pika import ExchangeType
 from aio_pika.exceptions import QueueEmpty
-from aiogram.filters import Command
-
-from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 import asyncio
 import aio_pika
 from aiogram import F
@@ -16,7 +14,7 @@ from src.templates.env import render
 @router.callback_query(F.data == 'see_receipts')
 async def find(call: CallbackQuery):
 
-    async with channel_pool.acquire() as channel: # type: aio_pika.Channel
+    async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
         queue = await channel.declare_queue(
             settings.USER_QUEUE.format(user_id=call.from_user.id),
@@ -67,7 +65,7 @@ async def find(call: CallbackQuery):
 @router.callback_query(F.data.startswith('info_receipts'))
 async def request_recipe_info(call: CallbackQuery):
     recipe_id = call.data.split('_')[2]
-    async with channel_pool.acquire() as channel: # type: aio_pika.Channel
+    async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
 
         queue = await channel.declare_queue(

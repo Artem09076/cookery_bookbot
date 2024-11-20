@@ -21,7 +21,7 @@ async def get_receipts(message: Message, state: FSMContext):
     data = await state.get_data()
     # await message.delete_reply_markup()
 
-    async with channel_pool.acquire() as channel: # type: aio_pika.Channel
+    async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
 
         queue = await channel.declare_queue(
@@ -33,7 +33,6 @@ async def get_receipts(message: Message, state: FSMContext):
             'user_messages',
             durable=True
         )
-
 
         await user_queue.bind(exchange, 'user_messages')
 
@@ -65,5 +64,3 @@ async def get_receipts(message: Message, state: FSMContext):
                 return
             except QueueEmpty:
                 await asyncio.sleep(1)
-
-
