@@ -1,9 +1,10 @@
 import aio_pika
 import msgpack
+import logging.config
 from aio_pika import ExchangeType
 from sqlalchemy import cast, select
 from sqlalchemy.dialects.postgresql import JSONB
-
+from consumer.logger import LOGGING_CONFIG, logger
 from config.settings import settings
 from consumer.storage.rabbit import channel_pool
 from src.model.model import Recipe
@@ -11,6 +12,8 @@ from src.storage.db import async_session
 
 
 async def get_receipts(body):
+    logging.config.dictConfig(LOGGING_CONFIG)
+    logger.info('Прием запроса', body)
     ingredients = list(set(body.get('ingredients')))
 
     async with async_session() as db:
@@ -35,3 +38,4 @@ async def get_receipts(body):
             aio_pika.Message(msgpack.packb(response_body)),
             routing_key=settings.USER_QUEUE.format(user_id=user_id),
         )
+        logger.info(f'Отправка ответа {response_body}')

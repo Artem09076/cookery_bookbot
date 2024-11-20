@@ -1,13 +1,16 @@
-import aio_pika
 import msgpack
+import logging.config
 
 from consumer.handlers.event_distribution import handle_event_distribution
 from src.storage.rabbit import channel_pool
+from consumer.logger import LOGGING_CONFIG, logger
 
 
 async def main() -> None:
+    logging.config.dictConfig(LOGGING_CONFIG)
+    logger.info('Запуск consumer...')
     queue_name = 'user_messages'
-    async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
+    async with channel_pool.acquire() as channel:
         await channel.set_qos(
             prefetch_count=10,
         )
@@ -15,7 +18,7 @@ async def main() -> None:
         queue = await channel.declare_queue(queue_name, durable=True)
 
         async with queue.iterator() as queue_iter:
-            async for message in queue_iter:  # type: aio_pika.IncomingMessage
+            async for message in queue_iter:
                 async with message.process():
                     body = msgpack.unpackb(message.body)
                     await handle_event_distribution(body)

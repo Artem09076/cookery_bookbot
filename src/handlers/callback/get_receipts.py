@@ -25,5 +25,5 @@ async def create_recipe(message: Message, state: FSMContext):
     await state.update_data(ingredients=message.text.split(', '))
     kb_btn = KeyboardButton(text='Подобрать рецепт')
     kb = ReplyKeyboardMarkup(keyboard=[[kb_btn]], resize_keyboard=True)
-    await message.answer("Продукты сохранены. Нажмите 'Подобрать рецепт', когда закончите",  reply_markup=kb)
+    await message.answer("Продукты сохранены. Нажмите 'Подобрать рецепт', когда закончите", reply_markup=kb)
     await state.set_state(RecipeForm.ingredients_collected)
