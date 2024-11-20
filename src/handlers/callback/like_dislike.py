@@ -8,7 +8,6 @@ from aiogram import F
 from src.storage.rabbit import channel_pool
 
 
-@router.callback_query(F.data.startswith('like_') or F.data.startswith('dislike_'))
 from src.metrics import track_latency, SEND_MESSAGE
 from src.storage.rabbit import channel_pool
 

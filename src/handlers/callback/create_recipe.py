@@ -26,9 +26,6 @@ async def create_recipe(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.recipe_title)
-
-async def create_recipe_title(message: Message, state: FSMContext):
-
 @track_latency
 async def create_recipe_recipe_title(message: Message, state: FSMContext):
     if not message.text.isdigit():
@@ -40,8 +37,6 @@ async def create_recipe_recipe_title(message: Message, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.ingredients)
-
-async def create_recipe_ingredient(message: Message, state: FSMContext):
 @track_latency
 async def create_recipe_ingredients(message: Message, state: FSMContext):
     if not re.match(INGREDIENTS_REGEX, message.text):
@@ -53,7 +48,6 @@ async def create_recipe_ingredients(message: Message, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.description_recipe)
-async def create_recipe_description(message: Message, state: FSMContext):
 @track_latency
 async def create_recipe_description_recipe(message: Message, state: FSMContext):
     await state.update_data(description_recipe=message.text)
@@ -74,7 +68,6 @@ async def create_recipe_description_recipe(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data == 'correct', RecipeGroup.check_state)
-async def create_recipe_state(call: CallbackQuery, state: FSMContext):
 @track_latency
 async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMContext):
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
@@ -112,7 +105,6 @@ async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMConte
 
 
 @router.callback_query(F.data == 'incorrect', RecipeGroup.check_state)
-async def create_recipe_check_state(call: CallbackQuery, state: FSMContext):
 @track_latency
 async def create_recipe_check_state_incorrect(call: CallbackQuery, state: FSMContext):
     await call.answer('Запускаем сценарий с начала')
