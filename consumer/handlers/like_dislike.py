@@ -1,7 +1,8 @@
 from sqlalchemy import update
-
+import logging.config
 from consumer.storage.db import async_session
 from src.model.model import Recipe
+from consumer.logger import LOGGING_CONFIG, logger
 
 
 async def like_dislike(body):
@@ -13,3 +14,4 @@ async def like_dislike(body):
             stmt = update(Recipe).where(Recipe.id == recipe_id).values(dislikes=Recipe.dislikes + 1)
         await db.execute(stmt)
         await db.commit()
+        logger.info(f'Добавление лайка/дизлайка {stmt}')

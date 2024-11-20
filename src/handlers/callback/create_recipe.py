@@ -3,11 +3,12 @@ import re
 import aio_pika
 import msgpack
 from aio_pika import ExchangeType
-from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from aiogram.types import CallbackQuery, Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from src.handlers.callback.router import router
+from aiogram import F
+
 from src.handlers.state.recipe import RecipeGroup
 from src.metrics import track_latency, SEND_MESSAGE
 from src.storage.rabbit import channel_pool
@@ -25,6 +26,9 @@ async def create_recipe(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.recipe_title)
+
+async def create_recipe_title(message: Message, state: FSMContext):
+
 @track_latency
 async def create_recipe_recipe_title(message: Message, state: FSMContext):
     if not message.text.isdigit():
@@ -36,6 +40,8 @@ async def create_recipe_recipe_title(message: Message, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.ingredients)
+
+async def create_recipe_ingredient(message: Message, state: FSMContext):
 @track_latency
 async def create_recipe_ingredients(message: Message, state: FSMContext):
     if not re.match(INGREDIENTS_REGEX, message.text):
@@ -47,21 +53,20 @@ async def create_recipe_ingredients(message: Message, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.description_recipe)
+async def create_recipe_description(message: Message, state: FSMContext):
 @track_latency
 async def create_recipe_description_recipe(message: Message, state: FSMContext):
     await state.update_data(description_recipe=message.text)
 
     data = await state.get_data()
-    caption = (
-        f'Пожалуйста, проверьте все ли верно: \n\n'
-        f'Название рецепта: {data.get("recipe_title")}\n'
-        f'Ингридиенты: {data.get("ingredients")}\n'
-        f'Процесс готовки: {data.get("description_recipe")}\n'
-    )
+    caption = f'Пожалуйста, проверьте все ли верно: \n\n' \
+              f'Название рецепта: {data.get("recipe_title")}\n' \
+              f'Ингридиенты: {data.get("ingredients")}\n' \
+              f'Процесс готовки: {data.get("description_recipe")}\n'
 
     kb_list = [
-        [InlineKeyboardButton(text='✅Все верно', callback_data='correct')],
-        [InlineKeyboardButton(text='❌Заполнить сначала', callback_data='incorrect')],
+        [InlineKeyboardButton(text="✅Все верно", callback_data='correct')],
+        [InlineKeyboardButton(text="❌Заполнить сначала", callback_data='incorrect')]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=kb_list)
     await message.answer(caption, reply_markup=keyboard)
@@ -69,12 +74,16 @@ async def create_recipe_description_recipe(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data == 'correct', RecipeGroup.check_state)
+async def create_recipe_state(call: CallbackQuery, state: FSMContext):
 @track_latency
 async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMContext):
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
 
-        user_queue = await channel.declare_queue('user_messages', durable=True)
+        user_queue = await channel.declare_queue(
+            'user_messages',
+            durable=True
+        )
 
         await user_queue.bind(exchange, 'user_messages')
 
@@ -86,9 +95,13 @@ async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMConte
             'recipe_title': data.get('recipe_title'),
             'ingredients': ingredients,
             'description_recipe': data.get('description_recipe'),
-            'action': 'create_recipe',
+            'action': 'create_recipe'
         }
 
+        await exchange.publish(
+            aio_pika.Message(msgpack.packb(body)),
+            'user_messages'
+        )
         await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
         SEND_MESSAGE.inc()
 
@@ -99,6 +112,7 @@ async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMConte
 
 
 @router.callback_query(F.data == 'incorrect', RecipeGroup.check_state)
+async def create_recipe_check_state(call: CallbackQuery, state: FSMContext):
 @track_latency
 async def create_recipe_check_state_incorrect(call: CallbackQuery, state: FSMContext):
     await call.answer('Запускаем сценарий с начала')

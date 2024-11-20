@@ -1,7 +1,9 @@
 import aio_pika
 import msgpack
+import logging.config
 from aio_pika import ExchangeType
 from sqlalchemy.future import select
+from consumer.logger import LOGGING_CONFIG, logger
 
 from config.settings import settings
 from consumer.storage.db import async_session
@@ -37,3 +39,4 @@ async def on_message(body):
             await exchange.publish(
                 aio_pika.Message(msgpack.packb(response_body)), routing_key=settings.USER_QUEUE.format(user_id=user_id)
             )
+            logger.info(f'Отправка ответа {response_body}')

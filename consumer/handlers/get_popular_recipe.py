@@ -1,11 +1,12 @@
 import msgpack
+import logging.config
 from sqlalchemy import select, desc
-from sqlalchemy.exc import IntegrityError
 from aio_pika import ExchangeType, Message
 from consumer.storage.db import async_session
-from src.model.model import User, Recipe
+from src.model.model import Recipe
 from src.storage.rabbit import channel_pool
 from config.settings import settings
+from consumer.logger import LOGGING_CONFIG, logger
 
 
 async def get_popular_recipe(body):
@@ -44,3 +45,4 @@ async def get_popular_recipe(body):
             Message(msgpack.packb(response_body)),
             routing_key=settings.USER_QUEUE.format(user_id=user_id)
         )
+        logger.info(f'Отправка ответа {response_body}')

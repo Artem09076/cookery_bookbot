@@ -1,11 +1,12 @@
 import re
 
-from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, KeyboardButton, Message, ReplyKeyboardMarkup
+from aiogram.types import CallbackQuery, Message, KeyboardButton, ReplyKeyboardMarkup
 
 from src.handlers.callback.create_recipe import INGREDIENTS_REGEX
 from src.handlers.callback.router import router
+from aiogram import F
+
 from src.handlers.state.recipe import RecipeForm
 from src.metrics import track_latency
 
