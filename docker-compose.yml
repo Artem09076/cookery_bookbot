@@ -23,13 +23,24 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-  
-  # web:
-  #   build: .
-  #   command: script/startapp.sh
-  #   volumes:
-  #     - "./:/code"
-  #   ports:
-  #     - "8000:8000"
-  #   env_file:
-  #     - config/.env
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus_config.yml"
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+
+  web:
+     build: .
+     command: script/startapp.sh
+     volumes:
+       - "./:/code"
+     ports:
+       - "8000:8000"
+     env_file:
+       - config/.env

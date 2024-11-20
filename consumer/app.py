@@ -2,6 +2,7 @@ import aio_pika
 import msgpack
 
 from consumer.handlers.event_distribution import handle_event_distribution
+from consumer.metrics import RECEIVE_MESSAGE
 from src.storage.rabbit import channel_pool
 
 
@@ -17,5 +18,6 @@ async def main() -> None:
         async with queue.iterator() as queue_iter:
             async for message in queue_iter:  # type: aio_pika.IncomingMessage
                 async with message.process():
+                    RECEIVE_MESSAGE.inc()
                     body = msgpack.unpackb(message.body)
                     await handle_event_distribution(body)

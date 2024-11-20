@@ -9,12 +9,15 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from src.handlers.callback.router import router
 from src.handlers.state.recipe import RecipeGroup
+from src.metrics import track_latency, SEND_MESSAGE
 from src.storage.rabbit import channel_pool
 
 INGREDIENTS_REGEX = r'^\s*([а-яА-ЯёЁa-zA-Z]+\s*)(,\s*[а-яА-ЯёЁa-zA-Z]+\s*)*$'
 
 
+
 @router.callback_query(F.data == 'new_receipt')
+@track_latency
 async def create_recipe(call: CallbackQuery, state: FSMContext):
     await state.clear()
     await call.message.answer('Введите пожалуйста название рецепта')
@@ -22,6 +25,7 @@ async def create_recipe(call: CallbackQuery, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.recipe_title)
+@track_latency
 async def create_recipe_recipe_title(message: Message, state: FSMContext):
     if not message.text.isdigit():
         await state.update_data(recipe_title=message.text)
@@ -32,6 +36,7 @@ async def create_recipe_recipe_title(message: Message, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.ingredients)
+@track_latency
 async def create_recipe_ingredients(message: Message, state: FSMContext):
     if not re.match(INGREDIENTS_REGEX, message.text):
         await message.answer('Пожалуйста, введите список ингредиентов в формате: продукт1, продукт2, ...')
@@ -42,6 +47,7 @@ async def create_recipe_ingredients(message: Message, state: FSMContext):
 
 
 @router.message(F.text, RecipeGroup.description_recipe)
+@track_latency
 async def create_recipe_description_recipe(message: Message, state: FSMContext):
     await state.update_data(description_recipe=message.text)
 
@@ -63,6 +69,7 @@ async def create_recipe_description_recipe(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data == 'correct', RecipeGroup.check_state)
+@track_latency
 async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMContext):
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
@@ -83,6 +90,7 @@ async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMConte
         }
 
         await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
+        SEND_MESSAGE.inc()
 
     await call.answer('Данные сохранены')
     await call.message.edit_reply_markup(reply_markup=None)
@@ -91,6 +99,7 @@ async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMConte
 
 
 @router.callback_query(F.data == 'incorrect', RecipeGroup.check_state)
+@track_latency
 async def create_recipe_check_state_incorrect(call: CallbackQuery, state: FSMContext):
     await call.answer('Запускаем сценарий с начала')
     await call.message.edit_reply_markup(reply_markup=None)

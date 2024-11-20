@@ -9,11 +9,13 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from config.settings import settings
 from src.handlers.callback.router import router
+from src.metrics import track_latency, SEND_MESSAGE
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
 
 @router.callback_query(F.data == 'see_receipts')
+@track_latency
 async def find(call: CallbackQuery):
 
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
@@ -28,6 +30,7 @@ async def find(call: CallbackQuery):
         body = {'user_id': call.from_user.id, 'action': 'find'}
 
         await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
+        SEND_MESSAGE.inc()
 
         retries = 3
         for _ in range(retries):

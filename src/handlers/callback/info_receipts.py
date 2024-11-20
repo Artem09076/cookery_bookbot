@@ -9,11 +9,13 @@ from aiogram.types import CallbackQuery
 
 from config.settings import settings
 from src.handlers.callback.router import router
+from src.metrics import track_latency, SEND_MESSAGE
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
 
 @router.callback_query(F.data.startswith('info_receipts'))
+@track_latency
 async def request_recipe_info(call: CallbackQuery):
     recipe_id = call.data.split('_')[2]
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
@@ -29,6 +31,8 @@ async def request_recipe_info(call: CallbackQuery):
         body = {'recipe_id': recipe_id, 'action': 'info_receipts', 'user_id': call.from_user.id}
 
         await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
+
+        SEND_MESSAGE.inc()
 
         retries = 3
         for _ in range(retries):
