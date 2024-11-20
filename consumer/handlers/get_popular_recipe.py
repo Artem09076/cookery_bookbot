@@ -10,8 +10,6 @@ from consumer.logger import LOGGING_CONFIG, logger
 
 
 async def get_popular_recipe(body):
-    logging.config.dictConfig(LOGGING_CONFIG)
-    logger.info('Прием запроса', body)
     user_id = body.get('user_id')
     async with async_session() as db:
         result = await db.execute(

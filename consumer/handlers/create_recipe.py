@@ -17,6 +17,5 @@ async def create_recipe(body):
             description_recipe=body.get('description_recipe'),
             user=user,
         )
-        logger.info(f'Создание рецепта {recipe.recipe_title}')
         db.add(recipe)
         await db.commit()

@@ -6,8 +6,6 @@ from consumer.logger import LOGGING_CONFIG, logger
 
 
 async def like_dislike(body):
-    logging.config.dictConfig(LOGGING_CONFIG)
-    logger.info('Прием запроса', body)
     recipe_id = body['recipe_id']
     async with async_session() as db:
         if body['action'] == 'like':

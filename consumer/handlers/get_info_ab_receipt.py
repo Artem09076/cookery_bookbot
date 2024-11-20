@@ -12,8 +12,6 @@ from src.storage.rabbit import channel_pool
 
 
 async def on_message(body):
-    logging.config.dictConfig(LOGGING_CONFIG)
-    logger.info('Прием запроса', body)
     action = body.get('action')
     if action == 'info_receipts':
         recipe_id = body.get('recipe_id')

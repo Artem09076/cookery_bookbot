@@ -13,7 +13,6 @@ from consumer.logger import logger, LOGGING_CONFIG
 async def find_receipt(body):
     logging.config.dictConfig(LOGGING_CONFIG)
     user_id = body.get('user_id')
-    logger.info('Прием запроса', body)
     async with async_session() as db:
         result = await db.execute(select(Recipe).where(Recipe.user_id == user_id))
         recipes = result.scalars().all()

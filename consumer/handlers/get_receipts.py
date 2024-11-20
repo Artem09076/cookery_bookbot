@@ -12,8 +12,6 @@ from src.storage.db import async_session
 
 
 async def get_receipts(body):
-    logging.config.dictConfig(LOGGING_CONFIG)
-    logger.info('Прием запроса', body)
     ingredients = list(set(body.get('ingredients')))
 
     async with async_session() as db:
