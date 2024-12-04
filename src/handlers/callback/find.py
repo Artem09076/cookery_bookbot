@@ -9,13 +9,13 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from config.settings import settings
 from src.handlers.callback.router import router
-from src.metrics import track_latency, SEND_MESSAGE
+from src.metrics import LATENCY, SEND_MESSAGE
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
 
 @router.callback_query(F.data == 'see_receipts')
-@track_latency
+@LATENCY.labels('find_user_recipe').time()
 async def find(call: CallbackQuery):
 
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel

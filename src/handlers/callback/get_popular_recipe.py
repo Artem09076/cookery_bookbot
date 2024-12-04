@@ -4,6 +4,8 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 from src.handlers.callback.router import router
 import aio_pika
 import msgpack
+
+from src.metrics import LATENCY
 from src.storage.rabbit import channel_pool
 from aio_pika import ExchangeType
 from config.settings import settings
@@ -11,6 +13,7 @@ from src.templates.env import render
 
 
 @router.callback_query(F.data == 'get_popular_recipe')
+@LATENCY.labels('get_popular_recipe').time()
 async def get_popular_recipe(call: CallbackQuery):
     await call.message.answer('Подбираю самый популярный рецепт...')
 

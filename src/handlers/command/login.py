@@ -8,12 +8,12 @@ from aiogram.types import Message
 from config.settings import settings
 from src.handlers.command.router import router
 from src.handlers.state.auth import AuthGroup
-from src.metrics import track_latency, SEND_MESSAGE
+from src.metrics import LATENCY, SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 
 
 @router.message(Command('login'))
-@track_latency
+@track_latency('login')
 async def login(message: Message, state: FSMContext):
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
@@ -31,5 +31,4 @@ async def login(message: Message, state: FSMContext):
         SEND_MESSAGE.inc()
 
     await state.set_state(AuthGroup.authorized)
-
     await message.answer('Прекрасно, вы зарегистрированы. Для начала работы введи команду /menu ')
