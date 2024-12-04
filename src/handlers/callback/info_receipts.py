@@ -9,13 +9,13 @@ from aiogram.types import CallbackQuery
 
 from config.settings import settings
 from src.handlers.callback.router import router
-from src.metrics import LATENCY, SEND_MESSAGE
+from src.metrics import LATENCY, SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
 
 @router.callback_query(F.data.startswith('info_receipts'))
-@LATENCY.labels('request_recipe_info').time()
+@track_latency('request_recipe_info')
 async def request_recipe_info(call: CallbackQuery):
     recipe_id = call.data.split('_')[2]
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel

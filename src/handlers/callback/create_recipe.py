@@ -18,7 +18,7 @@ INGREDIENTS_REGEX = r'^\s*([а-яА-ЯёЁa-zA-Z]+\s*)(,\s*[а-яА-ЯёЁa-zA-Z
 
 
 @router.callback_query(F.data == 'new_receipt')
-@LATENCY.labels('create_recipe').time()
+@track_latency('create_recipe_start')
 async def create_recipe(call: CallbackQuery, state: FSMContext):
     await state.clear()
     await call.message.answer('Введите пожалуйста название рецепта')

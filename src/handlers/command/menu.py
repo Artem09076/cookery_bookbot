@@ -2,12 +2,12 @@ from aiogram.filters import Command
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from src.handlers.command.router import router
-from src.metrics import LATENCY
+from src.metrics import LATENCY, track_latency
 from src.templates.env import render
 
 
 @router.message(Command('menu'))
-@LATENCY.labels(handler='menu').time()
+@track_latency('menu')
 async def menu(message: Message):
     inline_kb_list = [
         [InlineKeyboardButton(text='Создать новый рецепт', callback_data='new_receipt')],

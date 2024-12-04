@@ -47,7 +47,7 @@ async def show_recipe(message: Message, state: FSMContext):
 
 
 @router.message(F.text.lower() == 'подобрать рецепт', RecipeForm.ingredients_collected)
-@LATENCY.labels('get_receipts').time()
+@track_latency('get_receipts')
 async def get_receipts(message: Message, state: FSMContext):
     data = await state.get_data()
 
