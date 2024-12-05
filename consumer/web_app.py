@@ -1,8 +1,7 @@
 import asyncio
+from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-
-from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from consumer.api.router import router as tech_router
@@ -16,6 +15,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     yield
     task.cancel()
+
 
 def create_app() -> FastAPI:
     app = FastAPI(docs_url='/swagger', lifespan=lifespan)

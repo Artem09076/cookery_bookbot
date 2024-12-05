@@ -1,8 +1,8 @@
-"""Init
+"""Initial tables
 
-Revision ID: 9f52fd1ee731
-Revises:
-Create Date: 2024-10-30 10:03:38.337305
+Revision ID: 95ddab1c7567
+Revises: 
+Create Date: 2024-12-05 13:43:23.076361
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = '9f52fd1ee731'
+revision: str = '95ddab1c7567'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -33,6 +33,7 @@ def upgrade() -> None:
         sa.Column('id', sa.Uuid(), nullable=False),
         sa.Column('recipe_title', sa.String(), nullable=False),
         sa.Column('ingredients', sa.JSON(), nullable=False),
+        sa.Column('description_recipe', sa.String(), nullable=False),
         sa.Column('likes', sa.Integer(), nullable=False),
         sa.Column('dislikes', sa.Integer(), nullable=False),
         sa.Column('user_id', sa.Integer(), nullable=False),

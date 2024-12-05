@@ -1,11 +1,13 @@
+import logging.config
+
 import aio_pika
 import msgpack
-import logging.config
 from aio_pika import ExchangeType
 from sqlalchemy import cast, select
 from sqlalchemy.dialects.postgresql import JSONB
-from consumer.logger import LOGGING_CONFIG, logger
+
 from config.settings import settings
+from consumer.logger import LOGGING_CONFIG, logger
 from consumer.storage.rabbit import channel_pool
 from src.model.model import Recipe
 from src.storage.db import async_session

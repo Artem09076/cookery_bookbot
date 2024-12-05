@@ -1,10 +1,10 @@
 from consumer.handlers.create_recipe import create_recipe
 from consumer.handlers.find_receipt import find_receipt
 from consumer.handlers.get_info_ab_receipt import on_message
+from consumer.handlers.get_popular_recipe import get_popular_recipe
 from consumer.handlers.get_receipts import get_receipts
 from consumer.handlers.like_dislike import like_dislike
 from consumer.handlers.login import login
-from consumer.handlers.get_popular_recipe import get_popular_recipe
 
 
 async def handle_event_distribution(body):

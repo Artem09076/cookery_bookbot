@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     BOT_TOKEN: str
     BOT_WEBHOOK_URL: str
 
-    RABBIT_HOST: str = 'localhost'  # rabbitmq
+    RABBIT_HOST: str = 'rabbitmq'  # rabbitmq
     RABBIT_PORT: int = 5672
     RABBIT_USER: str = 'guest'
     RABBIT_PASSWORD: str = 'guest'

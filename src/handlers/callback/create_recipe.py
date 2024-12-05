@@ -3,18 +3,16 @@ import re
 import aio_pika
 import msgpack
 from aio_pika import ExchangeType
+from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from src.handlers.callback.router import router
-from aiogram import F
-
 from src.handlers.state.recipe import RecipeGroup
-from src.metrics import track_latency, SEND_MESSAGE, LATENCY
+from src.metrics import LATENCY, SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 
 INGREDIENTS_REGEX = r'^\s*([а-яА-ЯёЁa-zA-Z]+\s*)(,\s*[а-яА-ЯёЁa-zA-Z]+\s*)*$'
-
 
 
 @router.callback_query(F.data == 'new_receipt')
@@ -53,14 +51,16 @@ async def create_recipe_description_recipe(message: Message, state: FSMContext):
     await state.update_data(description_recipe=message.text)
 
     data = await state.get_data()
-    caption = f'Пожалуйста, проверьте все ли верно: \n\n' \
-              f'Название рецепта: {data.get("recipe_title")}\n' \
-              f'Ингридиенты: {data.get("ingredients")}\n' \
-              f'Процесс готовки: {data.get("description_recipe")}\n'
+    caption = (
+        f'Пожалуйста, проверьте все ли верно: \n\n'
+        f'Название рецепта: {data.get("recipe_title")}\n'
+        f'Ингридиенты: {data.get("ingredients")}\n'
+        f'Процесс готовки: {data.get("description_recipe")}\n'
+    )
 
     kb_list = [
         [InlineKeyboardButton(text="✅Все верно", callback_data='correct')],
-        [InlineKeyboardButton(text="❌Заполнить сначала", callback_data='incorrect')]
+        [InlineKeyboardButton(text="❌Заполнить сначала", callback_data='incorrect')],
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=kb_list)
     await message.answer(caption, reply_markup=keyboard)
@@ -73,10 +73,7 @@ async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMConte
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
 
-        user_queue = await channel.declare_queue(
-            'user_messages',
-            durable=True
-        )
+        user_queue = await channel.declare_queue('user_messages', durable=True)
 
         await user_queue.bind(exchange, 'user_messages')
 
@@ -88,13 +85,10 @@ async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMConte
             'recipe_title': data.get('recipe_title'),
             'ingredients': ingredients,
             'description_recipe': data.get('description_recipe'),
-            'action': 'create_recipe'
+            'action': 'create_recipe',
         }
 
-        await exchange.publish(
-            aio_pika.Message(msgpack.packb(body)),
-            'user_messages'
-        )
+        await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
 
         SEND_MESSAGE.inc()
     await call.answer('Данные сохранены')

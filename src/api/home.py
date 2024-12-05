@@ -2,7 +2,7 @@ from aiogram.types import Update
 from starlette.requests import Request
 
 from src.api.router import router
-from src.bot import dp, bot
+from src.bot import bot, dp
 from src.logger import logger, set_correlation_id
 
 

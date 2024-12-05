@@ -1,5 +1,5 @@
 import asyncio
-from contextlib import contextmanager, asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 
 import uvicorn
 from aiogram import Bot, Dispatcher
@@ -10,7 +10,7 @@ from fastapi import FastAPI
 
 from config.settings import settings
 from src.api.router import router
-from src.bot import dp, bot
+from src.bot import bot, dp
 from src.handlers.callback.router import router as callback_router
 from src.handlers.command.router import router as command_router
 from src.handlers.message.router import router as message_router
@@ -20,6 +20,7 @@ from src.metrics import RPSTrackerMiddleware
 from src.storage.redis import setup_redis
 
 logger = logging.getLogger('backend_logger')
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -49,8 +50,6 @@ def create_app() -> FastAPI:
     app.add_middleware(RPSTrackerMiddleware)
     logger.info(f'Приложение создано [{correlation_id}]')
     return app
-
-
 
 
 if __name__ == '__main__':

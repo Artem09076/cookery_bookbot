@@ -1,5 +1,7 @@
-from sqlalchemy.exc import IntegrityError
 import logging.config
+
+from sqlalchemy.exc import IntegrityError
+
 from consumer.logger import LOGGING_CONFIG, logger
 from consumer.storage.db import async_session
 from src.model.model import User

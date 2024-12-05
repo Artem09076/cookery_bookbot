@@ -1,20 +1,15 @@
 import asyncio
 
-from sqlalchemy.exc import IntegrityError
-
-from src.logger import logger
-from src.model.meta import Base
-from src.storage.db import engine
+from alembic import command
+from alembic.config import Config
 
 
-async def init_models():
-    try:
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
-        logger.info('Инициализация базы данных прошла успешно.')
-    except IntegrityError:
-        logger.warning('База данных уже существует. Повторная инициализация не требуется.')
+async def migrate(action: str = 'upgrade', revision: str = 'head'):
+    alembic_cfg = Config('alembic.ini')
+
+    if action == 'upgrade':
+        await asyncio.to_thread(command.upgrade, alembic_cfg, revision)
+    if action == 'downgrade':
+        await asyncio.to_thread(command.downgrade, alembic_cfg, revision)
 
 
-if __name__ == '__main__':
-    asyncio.run(init_models())

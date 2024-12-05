@@ -1,5 +1,7 @@
-from sqlalchemy import select
 import logging.config
+
+from sqlalchemy import select
+
 from consumer.logger import LOGGING_CONFIG, logger
 from src.model.model import Recipe, User
 from src.storage.db import async_session
