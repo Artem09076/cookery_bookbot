@@ -1,11 +1,9 @@
-import logging.config
-
 import msgpack
 from aio_pika import ExchangeType, Message
 from sqlalchemy import desc, select
 
 from config.settings import settings
-from consumer.logger import LOGGING_CONFIG, logger
+from consumer.logger import logger
 from consumer.storage.db import async_session
 from src.model.model import Recipe
 from src.storage.rabbit import channel_pool
@@ -29,7 +27,7 @@ async def get_popular_recipe(body):
             settings.USER_QUEUE.format(user_id=user_id),
         )
 
-        response_body = {"action": 'admin', "user_id": user_id, "popular_recipes": popular_recipes_data}
+        response_body = {'action': 'admin', 'user_id': user_id, 'popular_recipes': popular_recipes_data}
 
         await exchange.publish(
             Message(msgpack.packb(response_body)), routing_key=settings.USER_QUEUE.format(user_id=user_id)

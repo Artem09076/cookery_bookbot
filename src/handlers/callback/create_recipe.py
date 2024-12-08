@@ -9,7 +9,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from src.handlers.callback.router import router
 from src.handlers.state.recipe import RecipeGroup
-from src.metrics import LATENCY, SEND_MESSAGE, track_latency
+from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 
 INGREDIENTS_REGEX = r'^\s*([а-яА-ЯёЁa-zA-Z]+\s*)(,\s*[а-яА-ЯёЁa-zA-Z]+\s*)*$'
@@ -59,8 +59,8 @@ async def create_recipe_description_recipe(message: Message, state: FSMContext):
     )
 
     kb_list = [
-        [InlineKeyboardButton(text="✅Все верно", callback_data='correct')],
-        [InlineKeyboardButton(text="❌Заполнить сначала", callback_data='incorrect')],
+        [InlineKeyboardButton(text='✅Все верно', callback_data='correct')],
+        [InlineKeyboardButton(text='❌Заполнить сначала', callback_data='incorrect')],
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=kb_list)
     await message.answer(caption, reply_markup=keyboard)

@@ -5,7 +5,7 @@ from starlette.responses import Response
 from consumer.api.router import router
 
 
-@router.get("/metrics")
+@router.get('/metrics')
 async def metrics(
     request: Request,
 ) -> Response:

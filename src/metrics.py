@@ -1,9 +1,7 @@
-import asyncio
 import time
 from functools import wraps
-from typing import Callable
 
-from prometheus_client import REGISTRY, Counter, Histogram, generate_latest
+from prometheus_client import Counter, Histogram
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
@@ -30,13 +28,11 @@ def track_latency(method_name: str):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             start_time = time.monotonic()
-            print(f"[DEBUG] Starting {method_name} tracking")
             try:
                 return await func(*args, **kwargs)
             finally:
                 elapsed_time = time.monotonic() - start_time
                 LATENCY.labels(handler=method_name).observe(elapsed_time)
-                print(f"[DEBUG] {method_name} latency: {elapsed_time:.4f}s")
 
         return wrapper
 

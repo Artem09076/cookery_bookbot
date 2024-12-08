@@ -8,7 +8,7 @@ from aiogram.types import Message
 from config.settings import settings
 from src.handlers.command.router import router
 from src.handlers.state.auth import AuthGroup
-from src.metrics import LATENCY, SEND_MESSAGE, track_latency
+from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 
 

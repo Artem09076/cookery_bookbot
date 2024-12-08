@@ -1,23 +1,15 @@
 import asyncio
-from contextlib import asynccontextmanager, contextmanager
+from contextlib import asynccontextmanager
 
 import uvicorn
-from aiogram import Bot, Dispatcher
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
-from aiogram.fsm.storage.redis import RedisStorage
 from fastapi import FastAPI
 
 from config.settings import settings
 from src.api.router import router
 from src.bot import bot, dp
-from src.handlers.callback.router import router as callback_router
-from src.handlers.command.router import router as command_router
-from src.handlers.message.router import router as message_router
 from src.log_config import logging
 from src.logger import set_correlation_id
 from src.metrics import RPSTrackerMiddleware
-from src.storage.redis import setup_redis
 
 logger = logging.getLogger('backend_logger')
 

@@ -9,7 +9,5 @@ async def migrate(action: str = 'upgrade', revision: str = 'head'):
 
     if action == 'upgrade':
         await asyncio.to_thread(command.upgrade, alembic_cfg, revision)
-    if action == 'downgrade':
+    elif action == 'downgrade':
         await asyncio.to_thread(command.downgrade, alembic_cfg, revision)
-
-

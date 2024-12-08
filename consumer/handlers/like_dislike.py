@@ -1,8 +1,6 @@
-import logging.config
-
 from sqlalchemy import update
 
-from consumer.logger import LOGGING_CONFIG, logger
+from consumer.logger import logger
 from consumer.storage.db import async_session
 from src.model.model import Recipe
 

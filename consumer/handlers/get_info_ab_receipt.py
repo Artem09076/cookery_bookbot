@@ -1,12 +1,9 @@
-import logging.config
-
 import aio_pika
 import msgpack
 from aio_pika import ExchangeType
 from sqlalchemy.future import select
 
 from config.settings import settings
-from consumer.logger import LOGGING_CONFIG, logger
 from consumer.storage.db import async_session
 from src.model.model import Recipe
 from src.storage.rabbit import channel_pool
@@ -40,4 +37,3 @@ async def on_message(body):
             await exchange.publish(
                 aio_pika.Message(msgpack.packb(response_body)), routing_key=settings.USER_QUEUE.format(user_id=user_id)
             )
-            logger.info(f'Отправка ответа {response_body}')

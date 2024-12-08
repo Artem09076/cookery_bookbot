@@ -11,7 +11,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from config.settings import settings
 from src.handlers.message.router import router
 from src.handlers.state.recipe import RecipeForm
-from src.metrics import LATENCY, SEND_MESSAGE, track_latency
+from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 

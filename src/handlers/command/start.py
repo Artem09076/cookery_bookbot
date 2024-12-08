@@ -4,7 +4,7 @@ from aiogram.types import Message
 
 from src.handlers.command.router import router
 from src.handlers.state.auth import AuthGroup
-from src.metrics import LATENCY, track_latency
+from src.metrics import track_latency
 from src.templates.env import render
 
 

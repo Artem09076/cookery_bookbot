@@ -9,7 +9,7 @@ from aiogram.types import CallbackQuery
 
 from config.settings import settings
 from src.handlers.callback.router import router
-from src.metrics import LATENCY, SEND_MESSAGE, track_latency
+from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
