@@ -9,11 +9,13 @@ from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from consumer.storage import db as consumer_db, rabbit as consumer_rabbit
+from script.init_db import migrate
 from src import bot
 from src.storage import db, rabbit, redis
 from src.storage.db import engine, get_db
-from tests.mocking.rabbit import MockChannel, MockChannelPool, MockExchange, MockQueue
+from tests.mocking.rabbit import MockChannel, MockChannelPool, MockExchange, MockQueue, MockExchangeMessage
 from tests.mocking.redis import MockRedis
+import aio_pika
 
 
 @pytest_asyncio.fixture(autouse=True)
@@ -51,13 +53,17 @@ def _mock_redis(monkeypatch: pytest.MonkeyPatch) -> None:
 def mock_exchange() -> MockExchange:
     return MockExchange()
 
+@pytest_asyncio.fixture
+async def _load_seeds(db_session: AsyncSession) -> None:
+    await migrate('upgrade', '7b40814aa716')
+
 
 @pytest_asyncio.fixture()
-async def _load_queue(monkeypatch: pytest.MonkeyPatch, predefined_queue: Any, mock_exchange: MockExchange):
+async def _load_queue(monkeypatch: pytest.MonkeyPatch, predefined_queue: Any, mock_exchange: MockExchange, correlation_id):
     queue = MockQueue(deque())
 
     if predefined_queue is not None:
-        await queue.put(msgpack.packb(predefined_queue))
+        await queue.put(msgpack.packb(predefined_queue), correlation_id=correlation_id)
 
     channel = MockChannel(queue=queue, exchange=mock_exchange)
 
@@ -65,3 +71,4 @@ async def _load_queue(monkeypatch: pytest.MonkeyPatch, predefined_queue: Any, mo
 
     monkeypatch.setattr(rabbit, 'channel_pool', pool)
     monkeypatch.setattr(consumer_rabbit, 'channel_pool', pool)
+    monkeypatch.setattr(aio_pika, 'Message', MockExchangeMessage)

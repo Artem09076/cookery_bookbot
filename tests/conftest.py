@@ -13,7 +13,7 @@ from src.app import create_app
 async def _init_db() -> aiohttp.ClientSession:
     await migrate()
     yield
-    await migrate('downgrade', '-1')
+    await migrate('downgrade', 'base')
 
 
 @pytest.fixture(scope='session')

@@ -5,14 +5,14 @@ import msgpack
 from consumer.handlers.event_distribution import handle_event_distribution
 from consumer.logger import LOGGING_CONFIG, logger
 from consumer.metrics import RECEIVE_MESSAGE
-from src.storage.rabbit import channel_pool
+from src.storage import rabbit
 
 
 async def main() -> None:
     logging.config.dictConfig(LOGGING_CONFIG)
     logger.info('Запуск consumer...')
     queue_name = 'user_messages'
-    async with channel_pool.acquire() as channel:
+    async with rabbit.channel_pool.acquire() as channel:
         await channel.set_qos(
             prefetch_count=10,
         )

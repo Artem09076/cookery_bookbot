@@ -1,15 +1,15 @@
-from unittest.mock import MagicMock
+import uuid
 
 import pytest
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, User
 
 from src.handlers.callback.find import find
 from src.templates.env import render
-from tests.mocking.tg import MockTgCall
+from tests.mocking.tg import MockTgCall, MockTgMessage
 
 
 @pytest.mark.parametrize(
-    ('predefined_queue', 'expected_message'),
+    ('predefined_queue', 'correlation_id'),
     [
         (
             {
@@ -18,19 +18,15 @@ from tests.mocking.tg import MockTgCall
                     {'id': 2, 'recipe_title': 'Recipe 2'},
                 ]
             },
-            True,
-        ),
-        (
-            {'recipes': []},
-            False,
+            str(uuid.uuid4()),
         ),
     ],
 )
 @pytest.mark.usefixtures('_load_queue')
 @pytest.mark.asyncio
-async def test_find(predefined_queue, expected_message) -> None:
+async def test_find(predefined_queue, correlation_id) -> None:
     user = User(id=1, is_bot=False, is_premium=False, last_name='asdfdwq', first_name='asd')
-    message = MagicMock(spec=Message)
+    message = MockTgMessage(from_user=user)
     call = MockTgCall(from_user=user, message=message, data='see_receipts')
 
     await find(call=call)
@@ -40,6 +36,16 @@ async def test_find(predefined_queue, expected_message) -> None:
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
 
-    call.message.answer.assert_called_once_with(
-        text=render('find.jinja2', res=predefined_queue['recipes']), reply_markup=keyboard, parse_mode='HTML'
+    call.message.assert_has_calls(
+        [
+            (
+                'answer',
+                (),
+                {
+                    'text': render('find.jinja2', res=predefined_queue['recipes']),
+                    'reply_markup': keyboard,
+                    'parse_mode': 'HTML'
+                 }
+            )
+        ]
     )

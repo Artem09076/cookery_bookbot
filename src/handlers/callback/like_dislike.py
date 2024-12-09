@@ -23,7 +23,6 @@ async def handle_like(call: CallbackQuery):
         body = {'user_id': call.from_user.id, 'recipe_id': recipe_id, 'action': action}
 
         await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
-        await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')
         SEND_MESSAGE.inc()
 
         await call.message.delete_reply_markup()

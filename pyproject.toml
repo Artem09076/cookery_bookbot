@@ -109,3 +109,6 @@ module = [
     "uvicorn.*",
 ]
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+python_functions = 'test_event_distribution'
