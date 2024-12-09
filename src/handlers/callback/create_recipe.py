@@ -8,6 +8,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from src.handlers.callback.router import router
+from src.handlers.state.auth import AuthGroup
 from src.handlers.state.recipe import RecipeGroup
 from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
@@ -15,7 +16,7 @@ from src.storage.rabbit import channel_pool
 INGREDIENTS_REGEX = r'^\s*([а-яА-ЯёЁa-zA-Z]+\s*)(,\s*[а-яА-ЯёЁa-zA-Z]+\s*)*$'
 
 
-@router.callback_query(F.data == 'new_receipt')
+@router.callback_query(F.data == 'new_receipt', AuthGroup.authorized)
 @track_latency('create_recipe_start')
 async def create_recipe(call: CallbackQuery, state: FSMContext):
     await state.clear()

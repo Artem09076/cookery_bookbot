@@ -1,7 +1,7 @@
 import uuid
 
 import pytest
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, User
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, User
 
 from src.handlers.callback.find import find
 from src.templates.env import render
@@ -44,8 +44,8 @@ async def test_find(predefined_queue, correlation_id) -> None:
                 {
                     'text': render('find.jinja2', res=predefined_queue['recipes']),
                     'reply_markup': keyboard,
-                    'parse_mode': 'HTML'
-                 }
+                    'parse_mode': 'HTML',
+                },
             )
         ]
     )

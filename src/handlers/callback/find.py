@@ -9,21 +9,19 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from config.settings import settings
 from src.handlers.callback.router import router
+from src.handlers.state.auth import AuthGroup
 from src.metrics import SEND_MESSAGE, track_latency
 from src.storage import rabbit
 from src.templates.env import render
 
 
-@router.callback_query(F.data == 'see_receipts')
+@router.callback_query(F.data == 'see_receipts', AuthGroup.authorized)
 @track_latency('find_user_recipes')
 async def find(call: CallbackQuery):
 
     async with rabbit.channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
         queue = await channel.declare_queue(settings.USER_QUEUE.format(user_id=call.from_user.id), durable=True)
-        user_queue = await channel.declare_queue('user_messages', durable=True)
-
-
 
         body = {'user_id': call.from_user.id, 'action': 'find'}
 

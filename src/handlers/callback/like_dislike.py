@@ -5,11 +5,12 @@ from aiogram import F
 from aiogram.types import CallbackQuery
 
 from src.handlers.callback.router import router
+from src.handlers.state.auth import AuthGroup
 from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 
 
-@router.callback_query(F.data.startswith('like_') | F.data.startswith('dislike_'))
+@router.callback_query(F.data.startswith('like_') | F.data.startswith('dislike_'), AuthGroup.authorized)
 @track_latency('handle_like_dislike')
 async def handle_like(call: CallbackQuery):
     action, recipe_id = call.data.split('_')

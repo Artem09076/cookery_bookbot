@@ -1,6 +1,3 @@
-import asyncio
-import contextlib
-import uuid
 from collections import deque
 from dataclasses import dataclass
 from typing import Iterator
@@ -107,7 +104,6 @@ class MockMessage:
 
 class MockExchange(AsyncMock):
     pass
-
 
 
 class MockExchangeMessage(aio_pika.Message):
