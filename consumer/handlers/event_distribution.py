@@ -5,9 +5,10 @@ from consumer.handlers.get_popular_recipe import get_popular_recipe
 from consumer.handlers.get_receipts import get_receipts
 from consumer.handlers.like_dislike import like_dislike
 from consumer.handlers.login import login
+from typing import Dict, Any
 
 
-async def handle_event_distribution(body):
+async def handle_event_distribution(body: Dict[str, Any]) -> None:
     match body['action']:
         case 'login':
             await login(body)

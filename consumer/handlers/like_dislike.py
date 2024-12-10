@@ -3,9 +3,10 @@ from sqlalchemy import update
 from consumer.logger import logger
 from consumer.storage.db import async_session
 from src.model.model import Recipe
+from typing import Dict, Any
 
 
-async def like_dislike(body):
+async def like_dislike(body: Dict[str, Any]) -> None:
     recipe_id = body['recipe_id']
     async with async_session() as db:
         if body['action'] == 'like':

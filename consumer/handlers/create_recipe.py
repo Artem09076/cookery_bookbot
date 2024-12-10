@@ -5,9 +5,10 @@ from sqlalchemy import select
 from consumer.logger import LOGGING_CONFIG, logger
 from src.model.model import Recipe, User
 from src.storage.db import async_session
+from typing import Dict, Any
 
 
-async def create_recipe(body):
+async def create_recipe(body: Dict[str, Any]) -> None:
     logging.config.dictConfig(LOGGING_CONFIG)
     logger.info('Прием запроса', body)
     async with async_session() as db:

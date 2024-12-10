@@ -4,7 +4,7 @@ from alembic import command
 from alembic.config import Config
 
 
-async def migrate(action: str = 'upgrade', revision: str = 'head'):
+async def migrate(action: str = 'upgrade', revision: str = 'head') -> None:
     alembic_cfg = Config('alembic.ini')
 
     if action == 'upgrade':

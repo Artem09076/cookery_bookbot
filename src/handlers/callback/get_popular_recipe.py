@@ -4,7 +4,7 @@ import aio_pika
 import msgpack
 from aio_pika import ExchangeType
 from aiogram import F
-from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from config.settings import settings
 from src.handlers.callback.router import router
@@ -16,8 +16,9 @@ from src.templates.env import render
 
 @router.callback_query(F.data == 'get_popular_recipe', AuthGroup.authorized)
 @track_latency('get_popular_recipe')
-async def get_popular_recipe(call: CallbackQuery):
-    await call.message.answer('Подбираю самый популярный рецепт...')
+async def get_popular_recipe(call: CallbackQuery) -> None:
+    if isinstance(call.message, Message):
+        await call.message.answer('Подбираю самый популярный рецепт...')
 
     async with channel_pool.acquire() as channel:
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
@@ -42,10 +43,13 @@ async def get_popular_recipe(call: CallbackQuery):
                     like_btn = InlineKeyboardButton(text='👍', callback_data=f'like_{recipe["id"]}')
                     dislike_btn = InlineKeyboardButton(text='👎', callback_data=f'dislike_{recipe["id"]}')
                     markup = InlineKeyboardMarkup(inline_keyboard=[[like_btn, dislike_btn]])
-
-                    await call.message.answer(recipe_text, reply_markup=markup)
+                    if call.message and isinstance(call.message, Message):
+                        await call.message.answer(recipe_text, reply_markup=markup)
+                    else:
+                        await call.answer('Ошибка: сообщение недоступно.')
                 return
 
             except asyncio.QueueEmpty:
                 await asyncio.sleep(1)
-        await call.message.answer('Ошибка при получении популярных рецептов. Попробуйте позже.')
+        if isinstance(call.message, Message):
+            await call.message.answer('Ошибка при получении популярных рецептов. Попробуйте позже.')

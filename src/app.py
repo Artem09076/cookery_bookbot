@@ -10,12 +10,13 @@ from src.bot import bot, dp
 from src.log_config import logging
 from src.logger import set_correlation_id
 from src.metrics import RPSTrackerMiddleware
+from typing import AsyncIterator
 
 logger = logging.getLogger('backend_logger')
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     polling_task: asyncio.Task[None] | None = None
     wh_info = await bot.get_webhook_info()
     if settings.BOT_WEBHOOK_URL and wh_info != settings.BOT_WEBHOOK_URL:

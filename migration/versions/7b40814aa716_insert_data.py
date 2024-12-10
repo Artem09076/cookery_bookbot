@@ -20,7 +20,7 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
-def upgrade():
+def upgrade() -> None:
     # Insert initial data into user table
     connection = op.get_bind()
     connection.execute(
@@ -47,7 +47,7 @@ def upgrade():
     )
 
 
-def downgrade():
+def downgrade() -> None:
     connection = op.get_bind()
     connection.execute(sa.text('DELETE FROM "recipe" WHERE user_id IN (1, 2);'))
     connection.execute(sa.text('DELETE FROM public."user" WHERE user_id IN (1, 2);'))

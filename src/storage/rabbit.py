@@ -3,6 +3,7 @@ from aio_pika.abc import AbstractRobustConnection
 from aio_pika.pool import Pool
 
 from config.settings import settings
+from aio_pika import Channel
 
 
 async def get_connection() -> AbstractRobustConnection:
@@ -12,8 +13,8 @@ async def get_connection() -> AbstractRobustConnection:
 connection_pool: Pool = Pool(get_connection, max_size=10)
 
 
-async def get_channel():
-    async with connection_pool.acquire() as connection:  # type: aio_pika.Connection
+async def get_channel() -> Channel:
+    async with connection_pool.acquire() as connection:
         return await connection.channel()
 
 

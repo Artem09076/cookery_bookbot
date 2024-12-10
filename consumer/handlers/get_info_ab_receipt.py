@@ -7,9 +7,10 @@ from config.settings import settings
 from consumer.storage.db import async_session
 from src.model.model import Recipe
 from src.storage.rabbit import channel_pool
+from typing import Dict, Any, Optional
 
 
-async def on_message(body):
+async def on_message(body: Dict[str, Any]) -> None:
     action = body.get('action')
     if action == 'info_receipts':
         recipe_id = body.get('recipe_id')
@@ -19,7 +20,7 @@ async def on_message(body):
             rec = result.scalar_one_or_none()
 
             if rec:
-                response_body = {'recipe': rec.to_dict()}
+                response_body: Dict[str, Optional[dict[str, Any]]] = {'recipe': rec.to_dict()}
             else:
                 response_body = {'recipe': None}
 
