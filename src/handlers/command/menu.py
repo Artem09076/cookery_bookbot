@@ -8,7 +8,7 @@ from src.templates.env import render
 
 @router.message(Command('menu'))
 @track_latency('menu')
-async def menu(message: Message):
+async def menu(message: Message) -> None:
     inline_kb_list = [
         [InlineKeyboardButton(text='Создать новый рецепт', callback_data='new_receipt')],
         [InlineKeyboardButton(text='Получить рецепт по продуктам', callback_data='get_receipts')],

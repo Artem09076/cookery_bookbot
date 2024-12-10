@@ -7,9 +7,10 @@ from consumer.logger import logger
 from consumer.storage.db import async_session
 from src.model.model import Recipe
 from src.storage.rabbit import channel_pool
+from typing import Dict, Any
 
 
-async def get_popular_recipe(body):
+async def get_popular_recipe(body: Dict[str, Any]) -> None:
     user_id = body.get('user_id')
     async with async_session() as db:
         result = await db.execute(select(Recipe).order_by(desc(Recipe.likes)).limit(1))

@@ -10,9 +10,10 @@ from consumer.logger import LOGGING_CONFIG, logger
 from consumer.storage import rabbit
 from consumer.storage.db import async_session
 from src.model.model import Recipe
+from typing import Dict, Any
 
 
-async def find_receipt(body):
+async def find_receipt(body: Dict[str, Any]) -> None:
     logging.config.dictConfig(LOGGING_CONFIG)
     user_id = body.get('user_id')
     async with async_session() as db:

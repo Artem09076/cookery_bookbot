@@ -26,7 +26,7 @@ class ConsoleFormatter(logging.Formatter):
         return super().format(record)
 
 
-def set_correlation_id():
+def set_correlation_id() -> str:
     correlation_id = str(uuid4())
     correlation_id_context.set(correlation_id)
     return correlation_id

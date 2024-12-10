@@ -9,10 +9,11 @@ from consumer.logger import logger
 from consumer.storage.rabbit import channel_pool
 from src.model.model import Recipe
 from src.storage.db import async_session
+from typing import Dict, Any
 
 
-async def get_receipts(body):
-    ingredients = list(set(body.get('ingredients')))
+async def get_receipts(body: Dict[str, Any]) -> None:
+    ingredients = list(set(body.get('ingredients', [])))
 
     async with async_session() as db:
         stmt = select(Recipe).where(cast(Recipe.ingredients, JSONB).op('@>')(ingredients)).order_by(Recipe.likes.desc())

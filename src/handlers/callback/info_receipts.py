@@ -5,7 +5,7 @@ import msgpack
 from aio_pika import ExchangeType
 from aio_pika.exceptions import QueueEmpty
 from aiogram import F
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
 from config.settings import settings
 from src.handlers.callback.router import router
@@ -17,8 +17,11 @@ from src.templates.env import render
 
 @router.callback_query(F.data.startswith('info_receipts'), AuthGroup.authorized)
 @track_latency('request_recipe_info')
-async def request_recipe_info(call: CallbackQuery):
-    recipe_id = call.data.split('_')[2]
+async def request_recipe_info(call: CallbackQuery) -> None:
+    if call.data:
+        recipe_id = call.data.split('_')[2]
+    else:
+        return
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
 
@@ -43,9 +46,15 @@ async def request_recipe_info(call: CallbackQuery):
                 response = msgpack.unpackb(result.body)
                 recipe = response.get('recipe')
                 if recipe:
-                    await call.message.answer(text=render('recipe_info.jinja2', recipe=recipe), parse_mode='HTML')
+                    if call.message and isinstance(call.message, Message):
+                        await call.message.answer(text=render('recipe_info.jinja2', recipe=recipe), parse_mode='HTML')
+                    else:
+                        await call.answer('Ошибка: сообщение недоступно.')
                 else:
-                    await call.message.answer(text='Рецепт не найден.', parse_mode='HTML')
+                    if call.message and isinstance(call.message, Message):
+                        await call.message.answer(text='Рецепт не найден.', parse_mode='HTML')
+                    else:
+                        await call.answer('Ошибка: сообщение недоступно.')
                 return
 
             except QueueEmpty:

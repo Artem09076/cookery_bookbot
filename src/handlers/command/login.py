@@ -14,7 +14,10 @@ from src.storage.rabbit import channel_pool
 
 @router.message(Command('login'))
 @track_latency('login')
-async def login(message: Message, state: FSMContext):
+async def login(message: Message, state: FSMContext) -> None:
+    if message.from_user is None:
+        await message.answer("Не удалось получить данные пользователя.")
+        return
     async with channel_pool.acquire() as channel:  # type: aio_pika.Channel
         exchange = await channel.declare_exchange('user_receipts', ExchangeType.TOPIC, durable=True)
         queue = await channel.declare_queue(settings.USER_QUEUE.format(user_id=message.from_user.id), durable=True)

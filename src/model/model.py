@@ -6,6 +6,7 @@ from sqlalchemy import JSON, TIMESTAMP, CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.meta import Base
+from typing import Dict, Any
 
 
 class Recipe(Base):
@@ -19,7 +20,7 @@ class Recipe(Base):
     user_id: Mapped[UUID] = mapped_column(ForeignKey('user.user_id'), nullable=False)
     user = relationship('User', back_populates='recipes')
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         return {
             'id': str(self.id),
             'recipe_title': self.recipe_title,

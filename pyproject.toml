@@ -77,11 +77,7 @@ include_trailing_comma = true
 use_parentheses = true
 multi_line_output = 3
 
-[tool.mypy]
-plugins = [
-    "sqlalchemy.ext.mypy.plugin",
-    "pydantic.mypy",
-]
+
 strict_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
@@ -112,3 +108,25 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 python_functions = 'test_event_distribution'
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+strict_optional = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_no_return = true
+warn_unreachable = true
+exclude = "tests/.*|venv/.*"
+files = ["src"]
+plugins = [
+    "sqlalchemy.ext.mypy.plugin",
+    "pydantic.mypy",
+]
+disable_error_code = [
+    'no-any-return',
+    'assignment',
+    ]
+
