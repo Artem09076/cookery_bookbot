@@ -63,7 +63,7 @@ async def get_receipts(message: Message, state: FSMContext) -> None:
         user_queue = await channel.declare_queue('user_messages', durable=True)
 
         await user_queue.bind(exchange, 'user_messages')
-
+        print(data.get('ingredients'))
         body = {'user_id': message.from_user.id, 'ingredients': data.get('ingredients', []), 'action': 'get_receipts'}
 
         await exchange.publish(aio_pika.Message(msgpack.packb(body)), 'user_messages')

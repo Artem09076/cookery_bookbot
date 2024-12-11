@@ -12,7 +12,7 @@ from src.handlers.state.recipe import RecipeGroup
 from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 
-INGREDIENTS_REGEX = r'^\s*([а-яА-ЯёЁa-zA-Z]+\s*)(,\s*[а-яА-ЯёЁa-zA-Z]+\s*)*$'
+INGREDIENTS_REGEX = r'^\s*([а-яА-ЯёЁa-zA-Z0-9]+\s*)(,\s*[а-яА-ЯёЁa-zA-Z0-9]+\s*)*$'
 
 
 @router.callback_query(F.data == 'new_receipt')
@@ -84,11 +84,7 @@ async def create_recipe_check_state_correct(call: CallbackQuery, state: FSMConte
         await user_queue.bind(exchange, 'user_messages')
 
         data = await state.get_data()
-        ingredients = data.get('ingredients', ' ')
-        if ingredients:
-            ingredients.split(' ')
-        else :
-            []
+        ingredients = data.get('ingredients', '').split(', ')
 
         body = {
             'user_id': call.from_user.id,

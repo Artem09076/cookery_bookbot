@@ -13,11 +13,10 @@ from typing import Dict, Any
 
 
 async def get_receipts(body: Dict[str, Any]) -> None:
-    ingredients = list(set(body.get('ingredients')))
-    print(ingredients)
+    ingredients = list(set(body.get('ingredients', [])))
 
     async with async_session() as db:
-        stmt = select(Recipe).where(cast(Recipe.ingredients, JSONB).op('@>')(ingredients)).order_by(Recipe.likes.desc())
+        stmt = select(Recipe).where(cast(Recipe.ingredients, JSONB).contains(ingredients)).order_by(Recipe.likes.desc())
         res = await db.execute(stmt)
         recipes = res.scalars().all()
         response_body = {'recipes': [recipe.to_dict() for recipe in recipes]}
