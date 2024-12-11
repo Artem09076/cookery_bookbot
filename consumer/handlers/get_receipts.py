@@ -13,7 +13,8 @@ from typing import Dict, Any
 
 
 async def get_receipts(body: Dict[str, Any]) -> None:
-    ingredients = list(set(body.get('ingredients', [])))
+    ingredients = list(set(body.get('ingredients')))
+    print(ingredients)
 
     async with async_session() as db:
         stmt = select(Recipe).where(cast(Recipe.ingredients, JSONB).op('@>')(ingredients)).order_by(Recipe.likes.desc())

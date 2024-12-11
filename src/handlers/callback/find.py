@@ -9,13 +9,12 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from config.settings import settings
 from src.handlers.callback.router import router
-from src.handlers.state.auth import AuthGroup
 from src.metrics import SEND_MESSAGE, track_latency
 from src.storage import rabbit
 from src.templates.env import render
 
 
-@router.callback_query(F.data == 'see_receipts', AuthGroup.authorized)
+@router.callback_query(F.data == 'see_receipts')
 @track_latency('find_user_recipes')
 async def find(call: CallbackQuery) -> None:
     if call.message is None:

@@ -9,13 +9,12 @@ from aiogram.types import CallbackQuery, Message
 
 from config.settings import settings
 from src.handlers.callback.router import router
-from src.handlers.state.auth import AuthGroup
 from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
 
-@router.callback_query(F.data.startswith('info_receipts'), AuthGroup.authorized)
+@router.callback_query(F.data.startswith('info_receipts'))
 @track_latency('request_recipe_info')
 async def request_recipe_info(call: CallbackQuery) -> None:
     if call.data:

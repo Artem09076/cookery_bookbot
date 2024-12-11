@@ -10,7 +10,6 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, C
 
 from config.settings import settings
 from src.handlers.message.router import router
-from src.handlers.state.auth import AuthGroup
 from src.handlers.state.recipe import RecipeForm
 from src.metrics import SEND_MESSAGE, track_latency
 from src.storage.rabbit import channel_pool
@@ -47,7 +46,7 @@ async def show_recipe(message: Message, state: FSMContext) -> None:
     await message.answer(render('recipe.jinja2', recipe=current_recipe), reply_markup=markup)
 
 
-@router.message(F.text.lower() == 'подобрать рецепт', RecipeForm.ingredients_collected, AuthGroup.authorized)
+@router.message(F.text.lower() == 'подобрать рецепт', RecipeForm.ingredients_collected)
 @track_latency('get_receipts')
 async def get_receipts(message: Message, state: FSMContext) -> None:
     if message.from_user is None:

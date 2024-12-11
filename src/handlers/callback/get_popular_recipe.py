@@ -8,13 +8,12 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from config.settings import settings
 from src.handlers.callback.router import router
-from src.handlers.state.auth import AuthGroup
 from src.metrics import track_latency
 from src.storage.rabbit import channel_pool
 from src.templates.env import render
 
 
-@router.callback_query(F.data == 'get_popular_recipe', AuthGroup.authorized)
+@router.callback_query(F.data == 'get_popular_recipe')
 @track_latency('get_popular_recipe')
 async def get_popular_recipe(call: CallbackQuery) -> None:
     if isinstance(call.message, Message):

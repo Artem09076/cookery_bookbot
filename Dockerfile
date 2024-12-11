@@ -10,4 +10,4 @@ RUN python3 -m poetry config virtualenvs.create false \
     && python3 -m poetry install --no-interaction --no-ansi --without dev \
     && echo yes | python3 -m poetry cache clear . --all
 
-RUN chmod +x script/startapp.sh
+# RUN chmod +x script/startapp.sh
