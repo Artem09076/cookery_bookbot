@@ -1,11 +1,11 @@
 import time
 from functools import wraps
+from typing import Any, Callable, Coroutine
 
 from prometheus_client import Counter, Histogram
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
-from typing import Callable, Any, Coroutine
 
 BUCKETS = [
     0.2,
@@ -24,7 +24,9 @@ BUCKETS = [
 LATENCY = Histogram('latency_seconds_handler', 'считает задержку', labelnames=['handler'], buckets=BUCKETS)
 
 
-def track_latency(method_name: str) -> Callable[[Callable[..., Coroutine[Any, Any, Any]]], Callable[..., Coroutine[Any, Any, Any]]]:
+def track_latency(
+    method_name: str,
+) -> Callable[[Callable[..., Coroutine[Any, Any, Any]]], Callable[..., Coroutine[Any, Any, Any]]]:
     def decorator(func: Callable[..., Coroutine[Any, Any, Any]]) -> Callable[..., Coroutine[Any, Any, Any]]:
         @wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:

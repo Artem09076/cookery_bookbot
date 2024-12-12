@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import msgpack
 from aio_pika import ExchangeType, Message
 from sqlalchemy import desc, select
@@ -7,7 +9,6 @@ from consumer.logger import logger
 from consumer.storage.db import async_session
 from src.model.model import Recipe
 from src.storage.rabbit import channel_pool
-from typing import Dict, Any
 
 
 async def get_popular_recipe(body: Dict[str, Any]) -> None:

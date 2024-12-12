@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import aio_pika
 import msgpack
 from aio_pika import ExchangeType
@@ -9,7 +11,6 @@ from consumer.logger import logger
 from consumer.storage.rabbit import channel_pool
 from src.model.model import Recipe
 from src.storage.db import async_session
-from typing import Dict, Any
 
 
 async def get_receipts(body: Dict[str, Any]) -> None:

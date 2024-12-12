@@ -1,5 +1,6 @@
 import asyncio
 from contextlib import asynccontextmanager
+from typing import AsyncIterator
 
 import uvicorn
 from fastapi import FastAPI
@@ -10,7 +11,6 @@ from src.bot import bot, dp
 from src.log_config import logging
 from src.logger import set_correlation_id
 from src.metrics import RPSTrackerMiddleware
-from typing import AsyncIterator
 
 logger = logging.getLogger('backend_logger')
 

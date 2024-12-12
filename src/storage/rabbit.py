@@ -1,9 +1,9 @@
 import aio_pika
+from aio_pika import Channel
 from aio_pika.abc import AbstractRobustConnection
 from aio_pika.pool import Pool
 
 from config.settings import settings
-from aio_pika import Channel
 
 
 async def get_connection() -> AbstractRobustConnection:

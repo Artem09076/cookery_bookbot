@@ -1,3 +1,5 @@
+from typing import Any, Dict, Optional
+
 import aio_pika
 import msgpack
 from aio_pika import ExchangeType
@@ -7,7 +9,6 @@ from config.settings import settings
 from consumer.storage.db import async_session
 from src.model.model import Recipe
 from src.storage.rabbit import channel_pool
-from typing import Dict, Any, Optional
 
 
 async def on_message(body: Dict[str, Any]) -> None:

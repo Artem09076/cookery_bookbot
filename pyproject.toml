@@ -78,18 +78,6 @@ use_parentheses = true
 multi_line_output = 3
 
 
-strict_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-check_untyped_defs = true
-disallow_untyped_defs = true
-disallow_any_generics = true
-no_implicit_reexport = false
-exclude = [
-    "^conf/",
-    "^tests/",
-    "^utils/",
-]
 
 [tool.pydantic-mypy]
 init_forbid_extra = true

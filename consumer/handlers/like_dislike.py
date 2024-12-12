@@ -1,9 +1,10 @@
+from typing import Any, Dict
+
 from sqlalchemy import update
 
 from consumer.logger import logger
 from consumer.storage.db import async_session
 from src.model.model import Recipe
-from typing import Dict, Any
 
 
 async def like_dislike(body: Dict[str, Any]) -> None:

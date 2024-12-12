@@ -6,7 +6,7 @@ from aio_pika import ExchangeType
 from aio_pika.exceptions import QueueEmpty
 from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, CallbackQuery
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from config.settings import settings
 from src.handlers.message.router import router
@@ -50,7 +50,7 @@ async def show_recipe(message: Message, state: FSMContext) -> None:
 @track_latency('get_receipts')
 async def get_receipts(message: Message, state: FSMContext) -> None:
     if message.from_user is None:
-        await message.answer("Не удалось получить данные пользователя.")
+        await message.answer('Не удалось получить данные пользователя.')
         return
 
     data = await state.get_data()

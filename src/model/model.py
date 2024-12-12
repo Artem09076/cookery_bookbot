@@ -1,12 +1,11 @@
 from datetime import datetime
-from typing import List
+from typing import Any, Dict, List
 from uuid import UUID, uuid4
 
 from sqlalchemy import JSON, TIMESTAMP, CheckConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.model.meta import Base
-from typing import Dict, Any
 
 
 class Recipe(Base):

@@ -1,11 +1,11 @@
 import logging.config
+from typing import Any, Dict
 
 from sqlalchemy import select
 
 from consumer.logger import LOGGING_CONFIG, logger
 from src.model.model import Recipe, User
 from src.storage.db import async_session
-from typing import Dict, Any
 
 
 async def create_recipe(body: Dict[str, Any]) -> None:

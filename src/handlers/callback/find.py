@@ -41,9 +41,7 @@ async def find(call: CallbackQuery) -> None:
                 keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
                 if isinstance(call.message, Message):
                     await call.message.answer(
-                        text=render('find.jinja2', res=recipes['recipes']),
-                        reply_markup=keyboard,
-                        parse_mode='HTML'
+                        text=render('find.jinja2', res=recipes['recipes']), reply_markup=keyboard, parse_mode='HTML'
                     )
                 return
             except QueueEmpty:
